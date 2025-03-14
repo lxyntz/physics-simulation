@@ -7,7 +7,6 @@ https://lisa94destiny.github.io/physics-simulation/
 ## 作者信息
 
 - Lisa（stardust）
-- WeChat：ls94destiny
 - AI探索者，物理教育者，开源~
 - 欢迎各位老师来交流讨论提需求~
 
