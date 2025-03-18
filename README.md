@@ -1,6 +1,6 @@
 # 高中物理可视化教学平台
 
-<a href="https://lisa94destiny.github.io/physics-simulation/" target="_blank">https://lisa94destiny.github.io/physics-simulation/</a>
+[https://lisa94destiny.github.io/physics-simulation/](https://lisa94destiny.github.io/physics-simulation/){:target="_blank"}
 
 这是一个专为高中物理教学设计的交互式可视化模拟平台。通过直观的动画和交互控制，帮助学生更好地理解物理概念和原理。
 
@@ -9,7 +9,7 @@
 - Lisa（stardust）
 - AI探索者，物理教育者，开源~
 - 个人公众号：Lisa是个机器人
-- 强烈致谢：歸藏大佬的前端提示词<a href="https://x.com/op7418/status/1899028568962941147" target="_blank">https://x.com/op7418/status/1899028568962941147</a>
+- 强烈致谢：歸藏大佬的前端提示词[https://x.com/op7418/status/1899028568962941147](https://x.com/op7418/status/1899028568962941147){:target="_blank"}
 - 欢迎各位老师来交流讨论提需求~
 
 ## 项目特点
@@ -32,11 +32,11 @@
 5. **交叉领域与实验技能**：物理与其他学科的交叉应用，以及实验设计与数据分析等技能
 
 各领域已添加详细分类页面，可访问对应页面查看更多内容：
-- 力学：<a href="/categories/mechanics.html" target="_blank">/categories/mechanics.html</a>
-- 电磁学：<a href="/categories/electromagnetism.html" target="_blank">/categories/electromagnetism.html</a>
-- 振动与波动：<a href="/categories/waves.html" target="_blank">/categories/waves.html</a>
-- 光学与现代物理：<a href="/categories/optics-modern.html" target="_blank">/categories/optics-modern.html</a>
-- 交叉领域与实验技能：<a href="/categories/interdisciplinary.html" target="_blank">/categories/interdisciplinary.html</a>
+- 力学：[/categories/mechanics.html](/categories/mechanics.html){:target="_blank"}
+- 电磁学：[/categories/electromagnetism.html](/categories/electromagnetism.html){:target="_blank"}
+- 振动与波动：[/categories/waves.html](/categories/waves.html){:target="_blank"}
+- 光学与现代物理：[/categories/optics-modern.html](/categories/optics-modern.html){:target="_blank"}
+- 交叉领域与实验技能：[/categories/interdisciplinary.html](/categories/interdisciplinary.html){:target="_blank"}
 
 ## 热门模拟实验
 
@@ -59,14 +59,14 @@
 
 ## 社交媒体
 
-- GitHub: <a href="https://github.com/Lisa94destiny" target="_blank">https://github.com/Lisa94destiny</a>
+- GitHub: [https://github.com/Lisa94destiny](https://github.com/Lisa94destiny){:target="_blank"}
 - 微信公众号: Lisa是个机器人（关注开发最新动态）
 - REDnote: 
-- Twitter/X: <a href="https://x.com/AIstardustX" target="_blank">@AIstardustX</a>
+- Twitter/X: [@AIstardustX](https://x.com/AIstardustX){:target="_blank"}
 
 ## 使用方法
 
-方法一：打开链接直接使用 <a href="https://lisa94destiny.github.io/physics-simulation/" target="_blank">https://lisa94destiny.github.io/physics-simulation/</a>
+方法一：打开链接直接使用 [https://lisa94destiny.github.io/physics-simulation/](https://lisa94destiny.github.io/physics-simulation/){:target="_blank"}
 
 方法二：
 1. 克隆或下载本仓库
