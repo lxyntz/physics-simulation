@@ -8,6 +8,8 @@ https://lisa94destiny.github.io/physics-simulation/
 
 - Lisa（stardust）
 - AI探索者，物理教育者，开源~
+- 个人公众号：Lisa是个机器人
+- 强烈致谢：歸藏大佬的前端提示词https://x.com/op7418/status/1899028568962941147
 - 欢迎各位老师来交流讨论提需求~
 
 ## 项目特点
@@ -16,18 +18,51 @@ https://lisa94destiny.github.io/physics-simulation/
 - 🎯 **直观可视化**：将抽象的物理概念转化为直观的视觉效果
 - 📱 **响应式设计**：适配各种设备，从手机到电脑都有良好体验（推荐电脑学习）
 - 🧠 **探究式学习**：鼓励学生通过观察和实验发现物理规律
+- 🔍 **全站搜索功能**：快速查找感兴趣的物理实验，支持模糊搜索
+- 🌐 **初高中知识衔接**：为未来的初中物理网站提供接口，实现知识的无缝衔接
 
-## 包含的模拟实验
+## 五大领域
 
-1. **双缝干涉测波长**：探索光的波动性，通过双缝干涉现象测量光的波长
-2. **简谐运动辅助圆**：通过辅助圆理解简谐运动的数学描述和物理特性
+本平台涵盖高中物理的五大核心领域：
+
+1. **力学**：研究物体运动与力的相互关系，包括牛顿力学、动量守恒、能量守恒等
+2. **电磁学**：探索电场、磁场及其相互作用，包括电路、电磁感应等
+3. **振动与波动**：研究周期性运动和波的传播特性，包括简谐运动、机械波等
+4. **光学与现代物理**：涵盖几何光学、波动光学和现代物理基础知识
+5. **交叉领域与实验技能**：物理与其他学科的交叉应用，以及实验设计与数据分析等技能
+
+各领域已添加详细分类页面，可访问对应页面查看更多内容：
+- 力学：[/categories/mechanics.html]
+- 电磁学：[/categories/electromagnetism.html]
+- 振动与波动：[/categories/waves.html]
+- 光学与现代物理：[/categories/optics-modern.html]
+- 交叉领域与实验技能：[/categories/interdisciplinary.html]
+
+## 热门模拟实验
+
+1. **动量守恒模型**：探索不同物理系统中的动量守恒定律
+2. **电磁感应实验**：探索移动导体棒在磁场中产生感应电动势的现象和规律（开发中）
 3. **波的二维干涉**：观察两个波源在二维平面上产生的干涉图样
-4. **弹簧振子简谐运动**：探索弹簧振子的简谐运动规律和能量转换过程
-5. **多普勒效应**：模拟声源或观察者运动时，声波频率的变化现象
-6. **机械波的叠加**：研究不同频率、振幅的机械波叠加后的波形变化
-7. **狭义相对论**：模拟时间膨胀、长度收缩、同时性相对性等相对论效应
-8. 更多模块开发中...（不要着急，一个人熬夜ing）
+4. **双缝干涉**：探索光的波动性，通过双缝干涉现象测量光的波长
+5. **交叉领域与实验技能**：学习物理实验数据的统计分析、误差处理和图形可视化技巧（开发中）
+五大领域，更多模块开发中...
 
+## 站点功能
+
+1. **全站搜索**：在任意页面点击导航栏的搜索图标，快速查找实验
+   - 支持模糊搜索和标签搜索
+   - 提供热门推荐实验
+   - 搜索结果高亮显示匹配文本
+2. **直观导航**：通过分类卡片和导航菜单快速访问不同领域
+3. **实验过滤**：在子页面中按难度和分类筛选实验
+4. **移动端适配**：响应式设计，支持各种设备访问
+
+## 社交媒体
+
+- GitHub: [https://github.com/Lisa94destiny](https://github.com/Lisa94destiny)
+- 微信公众号: Lisa是个机器人（关注开发最新动态）
+- REDnote: 
+- Twitter/X: [@AIstardustX](https://x.com/AIstardustX)
 
 ## 使用方法
 
@@ -38,6 +73,7 @@ https://lisa94destiny.github.io/physics-simulation/
 2. 打开 `index.html` 文件即可开始使用
 3. 点击任意模拟实验卡片，进入对应的模拟页面
 4. 根据页面指引，调整参数，观察物理现象变化
+5. 使用搜索功能快速查找需要的实验
 
 ## 项目结构
 
@@ -50,14 +86,31 @@ https://lisa94destiny.github.io/physics-simulation/
 │   ├── css/            # 样式文件
 │   ├── js/             # 通用JavaScript文件
 │   └── images/         # 图片资源
+├── categories/         # 物理学五大领域分类页面
+│   ├── mechanics.html           # 力学
+│   ├── electromagnetism.html    # 电磁学
+│   ├── waves.html               # 振动与波动
+│   ├── optics-modern.html       # 光学与现代物理
+│   ├── interdisciplinary.html   # 交叉领域与实验技能
+│   └── search.js                # 全站搜索组件
 ├── simulations/        # 模拟实验页面
-│   ├── double-slit.html    # 双缝干涉
-│   ├── harmonic.html       # 简谐运动
-│   ├── wave2d.html         # 波的二维干涉
-│   ├── spring.html         # 弹簧振子
-│   ├── doppler.html        # 多普勒效应
-│   ├── wave-sum.html       # 机械波叠加
-│   └── relativity.html     # 狭义相对论
+│   ├── mechanics/              # 力学实验
+│   │   └── momentum-conservation.html  # 动量守恒
+│   ├── electromagnetism/       # 电磁学实验
+│   │   ├── electric-field.html         # 电场可视化
+│   │   └── magnetic-field.html         # 磁场与电流
+│   ├── waves/                  # 振动与波动实验
+│   │   ├── harmonic.html               # 简谐运动
+│   │   ├── wave2d.html                 # 波的二维干涉
+│   │   ├── spring.html                 # 弹簧振子
+│   │   ├── doppler.html                # 多普勒效应
+│   │   └── wave-sum.html               # 机械波叠加
+│   ├── optics-modern/          # 光学与现代物理实验
+│   │   ├── double-slit.html            # 双缝干涉
+│   │   └── relativity/                 # 相对论
+│   │       └── relativity.html         # 狭义相对论
+│   └── interdisciplinary/      # 交叉领域实验
+│       └── data-analysis.html          # 数据分析
 ├── logs/               # 错误和运行日志
 └── versions/           # 版本历史记录
 ```
@@ -65,6 +118,10 @@ https://lisa94destiny.github.io/physics-simulation/
 ## 版本历史
 
 当前版本：1.0.0 (2025年3月)
+- 添加全站搜索功能
+- 优化用户界面和导航体验
+- 统一各页面风格和交互模式
+- 增加与初中物理的知识衔接接口
 
 ## 许可证
 

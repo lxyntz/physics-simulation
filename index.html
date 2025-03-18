@@ -14,6 +14,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.162.0/three.min.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 搜索组件 -->
+    <script src="categories/search.js" defer></script>
     <!-- 自定义样式 -->
     <style>
         /* 自定义颜色变量 */
@@ -68,10 +70,13 @@
                         物理可视化教学
                     </span>
                 </div>
+                <!-- 桌面导航 -->
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="#intro" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">简介</a>
-                    <a href="#simulations" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">模拟实验</a>
+                    <a href="#categories" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">五大领域</a>
+                    <a href="#simulations" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">热门模块</a>
                     <a href="#about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">关于项目</a>
+                    <!-- 搜索图标将自动插入到这里 -->
                 </div>
                 <div class="flex items-center md:hidden">
                     <button id="mobile-menu-button" class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50 focus:outline-none">
@@ -85,7 +90,8 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white shadow-sm">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="#intro" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">简介</a>
-                <a href="#simulations" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">模拟实验</a>
+                <a href="#categories" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">五大领域</a>
+                <a href="#simulations" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">热门模块</a>
                 <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">关于项目</a>
             </div>
         </div>
@@ -126,78 +132,320 @@
             </div>
         </section>
 
-        <!-- 模拟实验部分 -->
+        <!-- 五大领域部分 -->
+        <section id="categories" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">五大领域</h2>
+            <p class="mb-8 text-gray-600">探索不同领域的物理现象，体验沉浸式的物理学习之旅。</p>
+            
+            <!-- 第一行：力学、电磁学、振动与波动 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- 力学 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:-rotate-1">
+                    <a href="categories/mechanics.html" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-blue-600 to-indigo-700 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-yellow-400 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-blue-300 opacity-20"></div>
+                            
+                            <!-- 力学图标 - 更现代的牛顿摆 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <defs>
+                                    <linearGradient id="mechanics-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                        <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:0.7" />
+                                    </linearGradient>
+                                </defs>
+                                <!-- 顶部支架 -->
+                                <rect x="30" y="30" width="140" height="10" rx="5" fill="url(#mechanics-grad)" />
+                                
+                                <!-- 中间固定的球 -->
+                                <g class="pendulum-middle">
+                                    <line x1="100" y1="40" x2="100" y2="110" stroke="#ffffff" stroke-width="2" />
+                                    <circle cx="100" cy="120" r="15" fill="url(#mechanics-grad)" />
+                                </g>
+                                
+                                <!-- 右侧的球 -->
+                                <g class="pendulum-right">
+                                    <line x1="140" y1="40" x2="140" y2="110" stroke="#ffffff" stroke-width="2" />
+                                    <circle cx="140" cy="120" r="15" fill="url(#mechanics-grad)" />
+                                </g>
+                                
+                                <!-- 左侧摆动的球带发光效果 -->
+                                <g class="pendulum-left">
+                                    <line x1="60" y1="40" x2="40" y2="90" stroke="#ffffff" stroke-width="2" />
+                                    <circle cx="40" cy="100" r="15" fill="url(#mechanics-grad)" />
+                                    <circle cx="40" cy="100" r="20" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.5" />
+                                    <circle cx="40" cy="100" r="25" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.3" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">力学</h3>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- 电磁学 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:rotate-1">
+                    <a href="categories/electromagnetism.html" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-purple-600 to-pink-600 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-yellow-300 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-purple-300 opacity-20"></div>
+                            
+                            <!-- 电磁学图标 - 带动态效果的电磁场 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <defs>
+                                    <radialGradient id="electro-grad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                        <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:0.6" />
+                                    </radialGradient>
+                                </defs>
+                                <!-- 中心电子 -->
+                                <circle cx="100" cy="100" r="20" fill="url(#electro-grad)" />
+                                
+                                <!-- 电场线 -->
+                                <g opacity="0.8">
+                                    <path d="M 100,60 L 100,30" stroke="#ffffff" stroke-width="2" />
+                                    <path d="M 100,140 L 100,170" stroke="#ffffff" stroke-width="2" />
+                                    <path d="M 60,100 L 30,100" stroke="#ffffff" stroke-width="2" />
+                                    <path d="M 140,100 L 170,100" stroke="#ffffff" stroke-width="2" />
+                                </g>
+                                
+                                <!-- 磁场环 -->
+                                <g fill="none" stroke="#ffffff" opacity="0.6">
+                                    <ellipse cx="100" cy="100" rx="70" ry="40" stroke-width="1.5" transform="rotate(0,100,100)" />
+                                    <ellipse cx="100" cy="100" rx="70" ry="40" stroke-width="1.5" transform="rotate(45,100,100)" />
+                                    <ellipse cx="100" cy="100" rx="70" ry="40" stroke-width="1.5" transform="rotate(90,100,100)" />
+                                    <ellipse cx="100" cy="100" rx="70" ry="40" stroke-width="1.5" transform="rotate(135,100,100)" />
+                                </g>
+                                
+                                <!-- 电荷 + 符号 -->
+                                <g stroke="#ffffff" stroke-width="2">
+                                    <line x1="95" y1="100" x2="105" y2="100" />
+                                    <line x1="100" y1="95" x2="100" y2="105" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">电磁学</h3>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- 振动与波动 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:-rotate-1">
+                    <a href="categories/waves.html" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-teal-500 to-green-600 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-teal-300 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-green-300 opacity-20"></div>
+                            
+                            <!-- 振动与波动图标 - 动态波形 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <!-- 波动基线 -->
+                                <line x1="20" y1="100" x2="180" y2="100" stroke="#ffffff" stroke-width="1" opacity="0.5" />
+                                
+                                <!-- 波浪线 1 -->
+                                <path d="M 20,100 Q 35,60 50,100 Q 65,140 80,100 Q 95,60 110,100 Q 125,140 140,100 Q 155,60 170,100 Q 185,140 200,100" 
+                                      stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+                                
+                                <!-- 波浪线 2 - 半透明 -->
+                                <path d="M 20,100 Q 42.5,70 65,100 Q 87.5,130 110,100 Q 132.5,70 155,100 Q 177.5,130 200,100" 
+                                      stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round" />
+                                
+                                <!-- 波浪线 3 - 更透明 -->
+                                <path d="M 20,100 Q 50,80 80,100 Q 110,120 140,100 Q 170,80 200,100" 
+                                      stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round" />
+                                
+                                <!-- 波动点 -->
+                                <circle cx="50" cy="100" r="6" fill="#ffffff" />
+                                <circle cx="110" cy="100" r="6" fill="#ffffff" />
+                                <circle cx="170" cy="100" r="6" fill="#ffffff" />
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">振动与波动</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 第二行：光学与现代物理、交叉领域与实验技能、跳转到初中物理 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 光学与现代物理 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:rotate-1">
+                    <a href="categories/optics-modern.html" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-red-600 to-red-500 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-yellow-400 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-purple-300 opacity-20"></div>
+                            
+                            <!-- 光学与现代物理图标 - 棱镜和量子效应 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <!-- 光学图标 - 棱镜 -->
+                                <polygon points="50,70 100,50 150,70 120,130 80,130" fill="#ffffff" opacity="0.6"/>
+                                <!-- 光线 -->
+                                <line x1="20" y1="90" x2="50" y2="70" stroke="#ffffff" stroke-width="2"/>
+                                <!-- 光谱 -->
+                                <path d="M 120,130 Q 150,150 180,120" stroke="#FF0000" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,145 180,115" stroke="#FF7F00" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,140 180,110" stroke="#FFFF00" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,135 180,105" stroke="#00FF00" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,130 180,100" stroke="#0000FF" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,125 180,95" stroke="#4B0082" stroke-width="3" fill="none"/>
+                                <path d="M 120,130 Q 150,120 180,90" stroke="#8F00FF" stroke-width="3" fill="none"/>
+                                <!-- 原子模型 -->
+                                <circle cx="70" cy="160" r="5" fill="#ffffff"/>
+                                <ellipse cx="70" cy="160" rx="20" ry="10" fill="none" stroke="#ffffff" stroke-width="1"/>
+                                <ellipse cx="70" cy="160" rx="30" ry="15" fill="none" stroke="#ffffff" stroke-width="1"/>
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">光学与现代物理</h3>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- 交叉领域与实验技能 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:-rotate-1">
+                    <a href="categories/interdisciplinary.html" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-gray-700 to-gray-500 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-blue-400 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-green-300 opacity-20"></div>
+                            
+                            <!-- 交叉领域与实验技能图标 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <!-- 显微镜 -->
+                                <rect x="80" y="120" width="40" height="20" rx="2" fill="#ffffff" opacity="0.8"/>
+                                <rect x="90" y="140" width="20" height="10" rx="1" fill="#ffffff" opacity="0.8"/>
+                                <rect x="95" y="70" width="10" height="50" fill="#ffffff" opacity="0.8"/>
+                                <!-- 转盘 -->
+                                <circle cx="100" cy="60" r="20" fill="#ffffff" opacity="0.6"/>
+                                <circle cx="100" cy="60" r="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+                                <!-- 数据图表 -->
+                                <rect x="140" y="70" width="40" height="40" rx="2" fill="#ffffff" opacity="0.4"/>
+                                <polyline points="145,100 155,80 165,90 175,75" fill="none" stroke="#F97316" stroke-width="2"/>
+                                <!-- 化学烧杯 -->
+                                <path d="M 30,90 L 40,120 L 60,120 L 70,90" fill="none" stroke="#ffffff" stroke-width="2"/>
+                                <line x1="25" y1="90" x2="75" y2="90" stroke="#ffffff" stroke-width="2"/>
+                                <path d="M 40,100 Q 50,110 60,100" fill="none" stroke="#3B82F6" stroke-width="2"/>
+                                <!-- 连接线 -->
+                                <line x1="70" y1="100" x2="90" y2="100" stroke="#ffffff" stroke-width="1" stroke-dasharray="3,2"/>
+                                <line x1="110" y1="100" x2="140" y2="100" stroke="#ffffff" stroke-width="1" stroke-dasharray="3,2"/>
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">交叉领域与实验技能</h3>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- 跳转到初中物理 -->
+                <div class="transform transition-all duration-300 hover:scale-105 hover:rotate-1">
+                    <a href="#" class="block">
+                        <div class="relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-amber-500 to-orange-600 aspect-[3/2] flex items-center justify-center p-4">
+                            <!-- 背景装饰 -->
+                            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-yellow-300 opacity-20"></div>
+                            <div class="absolute -left-10 -bottom-10 w-32 h-32 rounded-full bg-orange-300 opacity-20"></div>
+                            
+                            <!-- 初中物理图标 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-3/5 h-3/5 z-10">
+                                <!-- 书本 -->
+                                <path d="M50,50 L150,50 L150,150 L50,150 C40,150 40,50 50,50" fill="none" stroke="#ffffff" stroke-width="2" />
+                                <path d="M50,50 C60,50 60,150 50,150" fill="none" stroke="#ffffff" stroke-width="2" />
+                                
+                                <!-- 书页 -->
+                                <line x1="70" y1="70" x2="130" y2="70" stroke="#ffffff" stroke-width="1.5" opacity="0.8" />
+                                <line x1="70" y1="85" x2="130" y2="85" stroke="#ffffff" stroke-width="1.5" opacity="0.8" />
+                                <line x1="70" y1="100" x2="110" y2="100" stroke="#ffffff" stroke-width="1.5" opacity="0.8" />
+                                
+                                <!-- 放大镜 -->
+                                <circle cx="130" cy="115" r="20" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9" />
+                                <line x1="145" y1="130" x2="160" y2="145" stroke="#ffffff" stroke-width="3" />
+                                
+                                <!-- 箭头 - 表示跳转 -->
+                                <path d="M100,180 L120,165 L100,150 Q110,165 100,180" fill="#ffffff" opacity="0.9" />
+                                <line x1="80" y1="165" x2="100" y2="165" stroke="#ffffff" stroke-width="2.5" />
+                            </svg>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <h3 class="text-xl font-bold text-gray-800">跳转到初中物理</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 热门模块部分 -->
         <section id="simulations" class="mb-12">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">物理模拟实验</h2>
-            <p class="mb-8 text-gray-600">选择下面的任意模拟实验，探索物理现象的奥秘。每个模拟都提供了交互控制，让您能够调整参数，观察变化。</p>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">热门模块</h2>
+            <p class="mb-8 text-gray-600">这些是我们平台上精选的物理模拟实验，每个领域各一个。每个模拟都提供了交互控制，让您能够调整参数，观察变化。更多模块可在各领域页面中找到。</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 双缝干涉 -->
+                <!-- 力学 - 动量守恒模型 -->
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 双缝干涉图案 -->
-                            <rect x="20" y="80" width="10" height="40" fill="#5E6AD2" opacity="0.9"/>
-                            <rect x="50" y="80" width="10" height="40" fill="#5E6AD2" opacity="0.9"/>
-                            
-                            <!-- 入射光 -->
-                            <line x1="0" y1="100" x2="20" y2="100" stroke="#F59E0B" stroke-width="2"/>
-                            <polygon points="15,95 20,100 15,105" fill="#F59E0B"/>
-                            
-                            <!-- 干涉图样 -->
-                            <path d="M 60 100 Q 80 60, 100 100 Q 120 140, 140 100 Q 160 60, 180 100" stroke="#10B981" stroke-width="2" fill="none"/>
-                            <path d="M 60 100 Q 80 140, 100 100 Q 120 60, 140 100 Q 160 140, 180 100" stroke="#10B981" stroke-width="2" fill="none" opacity="0.5"/>
-                            
-                            <!-- 干涉条纹 -->
-                            <rect x="180" y="70" width="5" height="10" fill="#10B981" opacity="0.8"/>
-                            <rect x="180" y="90" width="5" height="10" fill="#10B981" opacity="0.8"/>
-                            <rect x="180" y="110" width="5" height="10" fill="#10B981" opacity="0.8"/>
-                            <rect x="180" y="130" width="5" height="10" fill="#10B981" opacity="0.8"/>
+                            <!-- 水面 -->
+                            <rect x="0" y="150" width="200" height="50" fill="#5E6AD2" opacity="0.3"/>
+                            <!-- 船 -->
+                            <path d="M 50 130 L 150 130 L 160 150 L 40 150 Z" fill="#F59E0B"/>
+                            <!-- 人物 -->
+                            <!-- 头部 -->
+                            <circle cx="100" cy="90" r="10" fill="#10B981"/>
+                            <!-- 身体 -->
+                            <line x1="100" y1="100" x2="100" y2="120" stroke="#10B981" stroke-width="4"/>
+                            <!-- 手臂 -->
+                            <line x1="100" y1="105" x2="85" y2="115" stroke="#10B981" stroke-width="3"/>
+                            <line x1="100" y1="105" x2="115" y2="115" stroke="#10B981" stroke-width="3"/>
+                            <!-- 腿部 -->
+                            <line x1="100" y1="120" x2="90" y2="130" stroke="#10B981" stroke-width="3"/>
+                            <line x1="100" y1="120" x2="110" y2="130" stroke="#10B981" stroke-width="3"/>
                         </svg>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">双缝干涉测波长</h3>
-                        <p class="text-gray-600 mb-4">探索光的波动性，通过双缝干涉现象测量光的波长。</p>
-                        <a href="simulations/double-slit.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-microscope mr-2"></i>开始实验
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">动量守恒模型</h3>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索动量守恒定律在不同物理系统中的应用和表现。</p>
+                        <a href="simulations/mechanics/momentum-conservation.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                            <i class="fas fa-exchange-alt mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 简谐运动 -->
+                <!-- 电磁学 -->
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 简谐运动辅助圆 -->
-                            <circle cx="100" cy="100" r="50" fill="none" stroke="#5E6AD2" stroke-width="2" stroke-dasharray="5,2"/>
-                            
-                            <!-- 参考圆上的点 -->
-                            <circle cx="150" cy="100" r="6" fill="#F59E0B"/>
-                            
-                            <!-- 水平投影线 -->
-                            <line x1="150" y1="100" x2="190" y2="100" stroke="#10B981" stroke-width="2" stroke-dasharray="3,2"/>
-                            
-                            <!-- 水平运动点 -->
-                            <circle cx="190" cy="100" r="6" fill="#10B981"/>
-                            
-                            <!-- 坐标轴 -->
-                            <line x1="40" y1="100" x2="190" y2="100" stroke="#6B7280" stroke-width="1"/>
-                            <polygon points="190,95 200,100 190,105" fill="#6B7280"/>
-                            
-                            <!-- 正弦曲线 -->
-                            <path d="M 40 100 Q 55 50, 70 100 Q 85 150, 100 100 Q 115 50, 130 100 Q 145 150, 160 100" stroke="#EA4335" stroke-width="2" fill="none"/>
+                            <!-- 电磁感应图案 -->
+                            <circle cx="100" cy="100" r="40" fill="none" stroke="#5E6AD2" stroke-width="2"/>
+                            <circle cx="100" cy="100" r="30" fill="none" stroke="#5E6AD2" stroke-width="1.5" stroke-dasharray="4,2"/>
+                            <!-- 磁感线 -->
+                            <path d="M 60,100 Q 80,70 100,100 Q 120,130 140,100" fill="none" stroke="#F59E0B" stroke-width="2"/>
+                            <path d="M 60,90 Q 80,60 100,90 Q 120,120 140,90" fill="none" stroke="#F59E0B" stroke-width="2" opacity="0.7"/>
+                            <path d="M 60,110 Q 80,80 100,110 Q 120,140 140,110" fill="none" stroke="#F59E0B" stroke-width="2" opacity="0.7"/>
+                            <!-- 导线和电流 -->
+                            <line x1="100" y1="50" x2="100" y2="150" stroke="#10B981" stroke-width="3"/>
+                            <polygon points="100,60 95,70 105,70" fill="#10B981"/>
                         </svg>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">简谐运动辅助圆</h3>
-                        <p class="text-gray-600 mb-4">通过辅助圆理解简谐运动的数学描述和物理特性。</p>
-                        <a href="simulations/harmonic.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-circle-notch mr-2"></i>开始实验
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">电磁感应实验</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索移动导体棒在磁场中产生感应电动势的现象和规律。</p>
+                        <a href="categories/electromagnetism.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                            <i class="fas fa-bolt mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 波的二维干涉 -->
+                <!-- 振动与波动 - 波的二维干涉 -->
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
@@ -225,167 +473,88 @@
                         </svg>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">波的二维干涉</h3>
-                        <p class="text-gray-600 mb-4">观察两个波源在二维平面上产生的干涉图样。</p>
-                        <a href="simulations/wave2d.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">波的二维干涉</h3>
+                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">观察两个波源在二维平面上产生的干涉图样，有多种效果可以选择。</p>
+                        <a href="simulations/waves/wave2d.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
                             <i class="fas fa-water mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 弹簧振子 -->
+                <!-- 光学与现代物理 - 双缝干涉 -->
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 弹簧振子图案 -->
-                            <!-- 固定点 -->
-                            <rect x="80" y="20" width="40" height="10" fill="#6B7280"/>
+                            <!-- 双缝干涉图案 -->
+                            <rect x="20" y="80" width="10" height="40" fill="#5E6AD2" opacity="0.9"/>
+                            <rect x="50" y="80" width="10" height="40" fill="#5E6AD2" opacity="0.9"/>
                             
-                            <!-- 弹簧 -->
-                            <path d="M 100 30 L 100 40 L 90 45 L 110 55 L 90 65 L 110 75 L 90 85 L 110 95 L 90 105 L 110 115 L 100 120" 
-                                  stroke="#5E6AD2" stroke-width="3" fill="none"/>
+                            <!-- 入射光 -->
+                            <line x1="0" y1="100" x2="20" y2="100" stroke="#F59E0B" stroke-width="2"/>
+                            <polygon points="15,95 20,100 15,105" fill="#F59E0B"/>
                             
-                            <!-- 质量块 -->
-                            <rect x="80" y="120" width="40" height="30" fill="#F59E0B" rx="5" ry="5"/>
+                            <!-- 干涉图样 -->
+                            <path d="M 60 100 Q 80 60, 100 100 Q 120 140, 140 100 Q 160 60, 180 100" stroke="#10B981" stroke-width="2" fill="none"/>
+                            <path d="M 60 100 Q 80 140, 100 100 Q 120 60, 140 100 Q 160 140, 180 100" stroke="#10B981" stroke-width="2" fill="none" opacity="0.5"/>
+                            
+                            <!-- 干涉条纹 -->
+                            <rect x="180" y="70" width="5" height="10" fill="#10B981" opacity="0.8"/>
+                            <rect x="180" y="90" width="5" height="10" fill="#10B981" opacity="0.8"/>
+                            <rect x="180" y="110" width="5" height="10" fill="#10B981" opacity="0.8"/>
+                            <rect x="180" y="130" width="5" height="10" fill="#10B981" opacity="0.8"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">双缝干涉测波长</h3>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索光的波动性，通过双缝干涉现象测量光的波长。</p>
+                        <a href="simulations/optics-modern/double-slit.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                            <i class="fas fa-microscope mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 交叉领域与实验技能 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 数据分析图标 -->
+                            <rect x="40" y="60" width="120" height="80" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
                             
                             <!-- 坐标轴 -->
-                            <line x1="30" y1="30" x2="30" y2="170" stroke="#6B7280" stroke-width="1"/>
-                            <polygon points="25,35 30,30 35,35" fill="#6B7280"/>
+                            <line x1="60" y1="120" x2="140" y2="120" stroke="#64748b" stroke-width="2"/>
+                            <line x1="60" y1="120" x2="60" y2="80" stroke="#64748b" stroke-width="2"/>
                             
-                            <!-- 平衡位置指示线 -->
-                            <line x1="25" y1="100" x2="170" y2="100" stroke="#6B7280" stroke-width="1" stroke-dasharray="5,3"/>
-                            <text x="35" y="105" font-size="8" fill="#6B7280">平衡位置</text>
+                            <!-- 数据点和拟合曲线 -->
+                            <circle cx="80" cy="100" r="3" fill="#3b82f6"/>
+                            <circle cx="90" cy="90" r="3" fill="#3b82f6"/>
+                            <circle cx="100" cy="95" r="3" fill="#3b82f6"/>
+                            <circle cx="110" cy="85" r="3" fill="#3b82f6"/>
+                            <circle cx="120" cy="80" r="3" fill="#3b82f6"/>
+                            
+                            <path d="M 60,105 Q 90,75 120,80" stroke="#ef4444" stroke-width="2" fill="none"/>
+                            
+                            <!-- 误差棒 -->
+                            <line x1="80" y1="95" x2="80" y2="105" stroke="#64748b" stroke-width="1"/>
+                            <line x1="90" y1="85" x2="90" y2="95" stroke="#64748b" stroke-width="1"/>
+                            <line x1="100" y1="90" x2="100" y2="100" stroke="#64748b" stroke-width="1"/>
+                            <line x1="110" y1="80" x2="110" y2="90" stroke="#64748b" stroke-width="1"/>
+                            <line x1="120" y1="75" x2="120" y2="85" stroke="#64748b" stroke-width="1"/>
                         </svg>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">弹簧振子简谐运动</h3>
-                        <p class="text-gray-600 mb-4">探索弹簧振子的简谐运动规律和能量转换过程。</p>
-                        <a href="simulations/spring.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-compress-alt mr-2"></i>开始实验
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 多普勒效应 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 多普勒效应图案 -->
-                            <!-- 声源 -->
-                            <circle cx="80" cy="100" r="10" fill="#F59E0B"/>
-                            <text x="75" y="105" font-size="10" fill="#111827">S</text>
-                            
-                            <!-- 运动方向 -->
-                            <line x1="100" y1="100" x2="150" y2="100" stroke="#6B7280" stroke-width="1"/>
-                            <polygon points="145,95 150,100 145,105" fill="#6B7280"/>
-                            
-                            <!-- 声波 - 前方压缩 -->
-                            <circle cx="80" cy="100" r="20" fill="none" stroke="#5E6AD2" stroke-width="1" opacity="0.9"/>
-                            <ellipse cx="85" cy="100" rx="35" ry="30" fill="none" stroke="#5E6AD2" stroke-width="1" opacity="0.7"/>
-                            <ellipse cx="95" cy="100" rx="55" ry="45" fill="none" stroke="#5E6AD2" stroke-width="1" opacity="0.5"/>
-                            <ellipse cx="110" cy="100" rx="80" ry="65" fill="none" stroke="#5E6AD2" stroke-width="1" opacity="0.3"/>
-                            
-                            <!-- 观察者 -->
-                            <circle cx="170" cy="100" r="5" fill="#10B981"/>
-                            <text x="167" y="90" font-size="8" fill="#111827">观察者</text>
-                        </svg>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">多普勒效应</h3>
-                        <p class="text-gray-600 mb-4">模拟声源或观察者运动时，声波频率的变化现象。</p>
-                        <a href="simulations/doppler.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-volume-up mr-2"></i>开始实验
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 机械波的叠加 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 机械波叠加图案 -->
-                            <!-- 坐标轴 -->
-                            <line x1="20" y1="100" x2="180" y2="100" stroke="#6B7280" stroke-width="1"/>
-                            <polygon points="175,95 180,100 175,105" fill="#6B7280"/>
-                            
-                            <!-- 波形1 - 正弦波 -->
-                            <path d="M 20 100 Q 35 70, 50 100 Q 65 130, 80 100 Q 95 70, 110 100 Q 125 130, 140 100 Q 155 70, 170 100" 
-                                  stroke="#5E6AD2" stroke-width="2" fill="none"/>
-                            
-                            <!-- 波形2 - 另一个频率的正弦波 -->
-                            <path d="M 20 100 Q 30 80, 40 100 Q 50 120, 60 100 Q 70 80, 80 100 Q 90 120, 100 100 Q 110 80, 120 100 Q 130 120, 140 100 Q 150 80, 160 100 Q 170 120, 180 100" 
-                                  stroke="#F59E0B" stroke-width="2" fill="none" opacity="0.7"/>
-                            
-                            <!-- 叠加波 -->
-                            <path d="M 20 100 Q 32.5 60, 45 100 Q 57.5 140, 70 100 Q 82.5 60, 95 100 Q 107.5 140, 120 100 Q 132.5 60, 145 100 Q 157.5 140, 170 100" 
-                                  stroke="#10B981" stroke-width="2.5" fill="none" stroke-dasharray="3,2"/>
-                        </svg>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">机械波的叠加</h3>
-                        <p class="text-gray-600 mb-4">研究不同频率、振幅的机械波叠加后的波形变化。</p>
-                        <a href="simulations/wave-sum.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-chart-line mr-2"></i>开始实验
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 狭义相对论 (新增) -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 相对论图标 -->
-                            <circle cx="100" cy="100" r="40" fill="none" stroke="#5E6AD2" stroke-width="2"/>
-                            <!-- 光锥 -->
-                            <path d="M 100 60 L 150 20 L 50 20 Z" fill="#F59E0B" fill-opacity="0.3" stroke="#F59E0B" stroke-width="1"/>
-                            <path d="M 100 140 L 150 180 L 50 180 Z" fill="#F59E0B" fill-opacity="0.3" stroke="#F59E0B" stroke-width="1"/>
-                            <!-- 时空线 -->
-                            <line x1="100" y1="20" x2="100" y2="180" stroke="#5E6AD2" stroke-width="2" stroke-dasharray="5,3"/>
-                            <!-- 相对运动粒子 -->
-                            <circle cx="80" cy="80" r="6" fill="#10B981"/>
-                            <circle cx="120" cy="120" r="6" fill="#5E6AD2"/>
-                            <!-- E=mc² -->
-                            <text x="70" y="100" font-size="12" fill="#111827" font-weight="bold">E=mc²</text>
-                        </svg>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">狭义相对论可视化</h3>
-                        <p class="text-gray-600 mb-4">探索时间膨胀、长度收缩和洛伦兹变换等相对论效应。</p>
-                        <a href="simulations/relativity.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-rocket mr-2"></i>开始实验
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 开发中的模块 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 物理探究项目图标 -->
-                            <!-- 放大镜 -->
-                            <circle cx="80" cy="80" r="40" fill="none" stroke="#5E6AD2" stroke-width="3" opacity="0.9"/>
-                            <line x1="110" y1="110" x2="150" y2="150" stroke="#5E6AD2" stroke-width="5" stroke-linecap="round"/>
-                            
-                            <!-- 问号图标 -->
-                            <text x="75" y="90" font-size="40" fill="#F59E0B" font-weight="bold">?</text>
-                            
-                            <!-- 思考泡泡 -->
-                            <circle cx="140" cy="60" r="10" fill="#10B981" opacity="0.7"/>
-                            <circle cx="155" cy="45" r="8" fill="#10B981" opacity="0.5"/>
-                            <circle cx="165" cy="30" r="6" fill="#10B981" opacity="0.3"/>
-                            
-                            <!-- 工具图标 -->
-                            <rect x="30" y="130" width="40" height="50" fill="#E5E7EB" rx="3" ry="3"/>
-                            <line x1="40" y1="145" x2="60" y2="145" stroke="#6B7280" stroke-width="1"/>
-                            <line x1="40" y1="155" x2="60" y2="155" stroke="#6B7280" stroke-width="1"/>
-                            <line x1="40" y1="165" x2="50" y2="165" stroke="#6B7280" stroke-width="1"/>
-                        </svg>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-gray-800">更多模块开发中</h3>
-                        <p class="text-gray-600 mb-4">我们正在努力开发更多有趣的物理模拟，敬请期待！</p>
-                        <a href="#about" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
-                            <i class="fas fa-info-circle mr-2"></i>了解更多
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">数据分析与处理</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">学习物理实验数据的统计分析、误差处理和图形可视化技巧。</p>
+                        <a href="categories/interdisciplinary.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                            <i class="fas fa-chart-line mr-2"></i>开始学习
                         </a>
                     </div>
                 </div>
@@ -402,7 +571,7 @@
                         <p class="text-gray-600 mb-4">本项目旨在通过交互式可视化模拟，帮助高中生更直观地理解物理概念和原理。每个模拟都经过精心设计，既符合教学大纲要求，又能激发学生的学习兴趣。</p>
                         <p class="text-gray-600 mb-4">通过调整参数、观察现象变化，学生可以主动探索物理规律，培养科学思维和实验能力。</p>
                         <h3 class="text-xl font-semibold mb-4 text-gray-800 mt-6">作者简介</h3>
-                        <p class="text-gray-600">Lisa（stardust），AI+物理教育爱好者制作</p>
+                        <p class="text-gray-600">Lisa（stardust），AI+物理教育爱好者制作（感谢歸藏大佬前端提示词）</p>
                     </div>
                     <div class="md:flex-1 mt-6 md:mt-0">
                         <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
@@ -465,11 +634,17 @@
                     <a href="https://github.com/Lisa94destiny" target="_blank" class="text-gray-400 hover:text-indigo-600">
                         <i class="fab fa-github"></i>
                     </a>
-                    <a href="https://x.com/AIstardustX" target="_blank" class="text-gray-400 hover:text-indigo-600">
-                        <i class="fab fa-twitter"></i>
+                    <a href="#" class="text-gray-400 hover:text-indigo-600">
+                        <i class="fab fa-weixin"></i>
                     </a>
                     <a href="#" class="text-gray-400 hover:text-indigo-600">
-                        <i class="fab fa-linkedin"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M17 7L7 17M7 7l10 10" />
+                        </svg>
+                    </a>
+                    <a href="https://x.com/AIstardustX" target="_blank" class="text-gray-400 hover:text-indigo-600">
+                        <i class="fab fa-twitter"></i>
                     </a>
                 </div>
             </div>
@@ -498,6 +673,28 @@
                 // 如果是移动端，点击后关闭菜单
                 if (!mobileMenu.classList.contains('hidden')) {
                     mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // 物理领域下拉菜单
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryDropdown = document.getElementById('category-dropdown');
+            const categoryMenu = document.getElementById('category-menu');
+            
+            // 点击按钮时切换下拉菜单显示状态
+            if (categoryDropdown) {
+                categoryDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    categoryMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // 点击页面其他地方时关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (categoryDropdown && !categoryDropdown.contains(e.target) && 
+                    categoryMenu && !categoryMenu.contains(e.target)) {
+                    categoryMenu.classList.add('hidden');
                 }
             });
         });
