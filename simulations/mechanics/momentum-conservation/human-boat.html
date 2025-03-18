@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人船模型 - 动量守恒模型</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-ms-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Canvas 容器 */
+        #canvas-container {
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../momentum-conservation.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回动量守恒模型
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-ship mr-2 text-indigo-600"></i>
+                        人船模型
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 人的质量 -->
+                        <div>
+                            <label for="human-mass" class="block text-sm font-medium text-gray-700 mb-2">
+                                人的质量 (m₁)
+                                <span id="human-mass-value" class="text-indigo-600 ml-2">70</span> kg
+                            </label>
+                            <input type="range" id="human-mass" min="30" max="100" value="70" class="w-full" 
+                                   oninput="document.getElementById('human-mass-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 船的质量 -->
+                        <div>
+                            <label for="boat-mass" class="block text-sm font-medium text-gray-700 mb-2">
+                                船的质量 (m₂)
+                                <span id="boat-mass-value" class="text-indigo-600 ml-2">200</span> kg
+                            </label>
+                            <input type="range" id="boat-mass" min="100" max="500" value="200" class="w-full" 
+                                   oninput="document.getElementById('boat-mass-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 人走路速度 -->
+                        <div>
+                            <label for="walking-speed" class="block text-sm font-medium text-gray-700 mb-2">
+                                人走路速度 (v₁)
+                                <span id="walking-speed-value" class="text-indigo-600 ml-2">2</span> m/s
+                            </label>
+                            <input type="range" id="walking-speed" min="0.5" max="5" value="2" step="0.1" class="w-full" 
+                                   oninput="document.getElementById('walking-speed-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 水的阻力系数 -->
+                        <div>
+                            <label for="water-resistance" class="block text-sm font-medium text-gray-700 mb-2">
+                                水阻系数 (k)
+                                <span id="water-resistance-value" class="text-indigo-600 ml-2">0.1</span>
+                            </label>
+                            <input type="range" id="water-resistance" min="0" max="0.5" value="0.1" step="0.01" class="w-full" 
+                                   oninput="document.getElementById('water-resistance-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 显示控制 -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-velocity" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-velocity" class="ml-2 block text-sm text-gray-700">显示速度矢量</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-momentum" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-momentum" class="ml-2 block text-sm text-gray-700">显示动量矢量</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-center-of-mass" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-center-of-mass" class="ml-2 block text-sm text-gray-700">显示质心</label>
+                            </div>
+                        </div>
+                        
+                        <!-- 方向控制 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">人走路方向</label>
+                            <div class="flex space-x-2 justify-center">
+                                <button id="walk-left-btn" class="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                                    <i class="fas fa-arrow-left mr-1"></i>向左走
+                                </button>
+                                <button id="stop-btn" class="flex-1 bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition btn">
+                                    <i class="fas fa-stop mr-1"></i>停止
+                                </button>
+                                <button id="walk-right-btn" class="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                                    <i class="fas fa-arrow-right mr-1"></i>向右走
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 按钮组 -->
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button id="reset-btn" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 信息面板 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">物理量测量</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-700 mb-1">人的速度:</div>
+                            <div id="human-velocity" class="text-md font-medium text-indigo-600">
+                                v₁ = 0 m/s
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700 mb-1">船的速度:</div>
+                            <div id="boat-velocity" class="text-md font-medium text-indigo-600">
+                                v₂ = 0 m/s
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700 mb-1">系统总动量:</div>
+                            <div id="total-momentum" class="text-md font-medium text-indigo-600">
+                                p = 0 kg·m/s
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700 mb-1">质心速度:</div>
+                            <div id="center-of-mass-velocity" class="text-md font-medium text-indigo-600">
+                                v_cm = 0 m/s
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t">
+                            <div class="text-sm text-gray-700 mb-2">关系验证:</div>
+                            <div class="text-sm text-gray-600">
+                                根据动量守恒定律：m₁v₁ + m₂v₂ = 0
+                            </div>
+                            <div id="momentum-equation" class="text-md font-medium text-green-600 mt-1">
+                                70 × 0 + 200 × 0 = 0 kg·m/s
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧模拟区域 -->
+            <div class="lg:col-span-2">
+                <!-- 模拟容器 -->
+                <div id="canvas-container" class="h-[500px] relative">
+                    <!-- p5.js会在这里创建canvas -->
+                </div>
+                
+                <!-- 实验说明 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">实验原理</h3>
+                    <p class="text-gray-600 mb-4">人船模型是理解动量守恒的经典例子。当人在船上行走时，由于系统（人和船）未受到水平方向的外力作用，系统的总动量保持不变。<span class="font-semibold text-indigo-600">这导致人和船必须向相反方向运动</span>。</p>
+                    
+                    <div class="bg-indigo-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-indigo-700 mb-2">动量守恒定律</h4>
+                        <p class="text-gray-700">在水平方向上，系统总动量为零：</p>
+                        <div class="font-mono text-sm mt-2 bg-white p-2 rounded">
+                            m₁v₁ + m₂v₂ = 0
+                        </div>
+                        <p class="text-gray-700 mt-2">因此，船的速度可以通过以下公式计算：</p>
+                        <div class="font-mono text-sm mt-2 bg-white p-2 rounded">
+                            v₂ = -m₁v₁/m₂
+                        </div>
+                        <p class="text-gray-700 mt-2 font-semibold">注意负号：当人向右走（v₁为正）时，船必须向左移动（v₂为负）；当人向左走（v₁为负）时，船必须向右移动（v₂为正）。</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-green-700 mb-2">速度方向示意</h4>
+                        <div class="flex justify-center items-center my-3">
+                            <div class="mr-8 text-center">
+                                <div class="text-green-700 mb-1">人向右走</div>
+                                <div class="flex justify-center items-center">
+                                    <div class="bg-indigo-100 px-2 py-1 rounded">人 <i class="fas fa-arrow-right text-green-600"></i></div>
+                                    <div class="mx-2">→</div>
+                                    <div class="bg-amber-100 px-2 py-1 rounded"><i class="fas fa-arrow-left text-amber-600"></i> 船</div>
+                                </div>
+                            </div>
+                            <div class="ml-8 text-center">
+                                <div class="text-green-700 mb-1">人向左走</div>
+                                <div class="flex justify-center items-center">
+                                    <div class="bg-indigo-100 px-2 py-1 rounded">人 <i class="fas fa-arrow-left text-green-600"></i></div>
+                                    <div class="mx-2">→</div>
+                                    <div class="bg-amber-100 px-2 py-1 rounded"><i class="fas fa-arrow-right text-amber-600"></i> 船</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 text-sm text-center mt-2">由于动量守恒，人和船的运动方向始终相反</p>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 mt-6">实验说明</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                        <li>调整人和船的质量、人的行走速度和水的阻力系数</li>
+                        <li>点击"向左走"或"向右走"按钮，使人在船上移动</li>
+                        <li>观察人和船的运动及速度变化</li>
+                        <li><span class="font-semibold">注意观察人和船的速度方向始终相反</span></li>
+                        <li>验证动量守恒方程：m₁v₁ + m₂v₂ = 0</li>
+                    </ol>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mt-4">
+                        <h4 class="font-semibold text-yellow-700 mb-2">思考问题</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700">
+                            <li>水的阻力系数如何影响人和船的运动？</li>
+                            <li>人和船的质量比例如何影响各自的速度大小？</li>
+                            <li>系统质心的运动有什么特点？</li>
+                            <li>如果将水的阻力系数设为零，系统会如何运动？</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex justify-center md:order-2 space-x-6">
+                    <a href="https://github.com/Lisa94destiny" class="text-gray-400 hover:text-gray-500">
+                        <span class="sr-only">GitHub</span>
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="human-boat.js"></script>
+</body>
+</html> 

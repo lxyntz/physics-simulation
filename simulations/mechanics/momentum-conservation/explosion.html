@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爆炸演示 - 动量守恒模型</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-ms-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Canvas 容器 */
+        #canvas-container {
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../momentum-conservation.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回动量守恒模型
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-bomb mr-2 text-indigo-600"></i>
+                        爆炸演示模型
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 初始物体质量控制 -->
+                        <div>
+                            <label for="initial-mass" class="block text-sm font-medium text-gray-700 mb-2">
+                                初始物体质量 (m₀)
+                                <span id="initial-mass-value" class="text-indigo-600 ml-2">100</span> kg
+                            </label>
+                            <input type="range" id="initial-mass" min="50" max="200" value="100" class="w-full" 
+                                   oninput="document.getElementById('initial-mass-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 碎片数量控制 -->
+                        <div>
+                            <label for="fragment-count" class="block text-sm font-medium text-gray-700 mb-2">
+                                碎片数量
+                                <span id="fragment-count-value" class="text-indigo-600 ml-2">5</span>
+                            </label>
+                            <input type="range" id="fragment-count" min="3" max="10" value="5" step="1" class="w-full" 
+                                   oninput="document.getElementById('fragment-count-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 爆炸强度控制 -->
+                        <div>
+                            <label for="explosion-force" class="block text-sm font-medium text-gray-700 mb-2">
+                                爆炸强度
+                                <span id="explosion-force-value" class="text-indigo-600 ml-2">50</span>
+                            </label>
+                            <input type="range" id="explosion-force" min="10" max="150" value="50" class="w-full" 
+                                   oninput="document.getElementById('explosion-force-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 初始位置控制 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">初始位置</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="initial-x" class="text-xs text-gray-500">X 坐标</label>
+                                    <input type="number" id="initial-x" value="400" min="100" max="700" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                </div>
+                                <div>
+                                    <label for="initial-y" class="text-xs text-gray-500">Y 坐标</label>
+                                    <input type="number" id="initial-y" value="300" min="100" max="500" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 碎片质量分布 -->
+                        <div>
+                            <label for="mass-distribution" class="block text-sm font-medium text-gray-700 mb-2">
+                                碎片质量分布
+                            </label>
+                            <select id="mass-distribution" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full py-2 px-3">
+                                <option value="equal">均匀分布</option>
+                                <option value="random">随机分布</option>
+                                <option value="proportional">按距离比例分布</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 粒子效果控制 -->
+                        <div>
+                            <label for="particle-count" class="block text-sm font-medium text-gray-700 mb-2">
+                                粒子数量
+                                <span id="particle-count-value" class="text-indigo-600 ml-2">100</span>
+                            </label>
+                            <input type="range" id="particle-count" min="50" max="300" value="100" step="10" class="w-full" 
+                                   oninput="document.getElementById('particle-count-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 显示控制 -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-velocity" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-velocity" class="ml-2 block text-sm text-gray-700">显示速度矢量</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-momentum" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-momentum" class="ml-2 block text-sm text-gray-700">显示动量矢量</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-traces" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4">
+                                <label for="show-traces" class="ml-2 block text-sm text-gray-700">显示运动轨迹</label>
+                            </div>
+                        </div>
+                        
+                        <!-- 按钮组 -->
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button id="reset-btn" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                            <button id="start-btn" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                                <i class="fas fa-play mr-2"></i>开始
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 信息面板 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">物理量测量</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-700">爆炸前总动量:</div>
+                            <div id="initial-momentum" class="text-md font-medium text-indigo-600">
+                                p₀ = 0 kg·m/s
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">爆炸后总动量:</div>
+                            <div id="final-momentum" class="text-md font-medium text-indigo-600">
+                                p = 0 kg·m/s
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">总动量守恒误差:</div>
+                            <div id="momentum-error" class="text-md font-medium text-green-600">
+                                误差 = 0%
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t">
+                            <div class="text-sm text-gray-700 mb-2">碎片信息:</div>
+                            <div class="overflow-auto max-h-32">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-left">碎片</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-left">质量(kg)</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-left">速度(m/s)</th>
+                                            <th class="px-4 py-2 text-xs font-medium text-gray-500 text-left">动量(kg·m/s)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fragments-table" class="bg-white divide-y divide-gray-200">
+                                        <!-- 这里将通过JavaScript动态填充 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧模拟区域 -->
+            <div class="lg:col-span-2">
+                <!-- 模拟容器 -->
+                <div id="canvas-container" class="h-[600px] relative">
+                    <!-- p5.js会在这里创建canvas -->
+                </div>
+                
+                <!-- 实验说明 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">实验原理</h3>
+                    <p class="text-gray-600 mb-4">爆炸是动量守恒的典型应用场景。在爆炸前，物体静止，总动量为零。爆炸后，碎片向各个方向运动，但由于系统不受外力作用，总动量仍然为零。</p>
+                    
+                    <div class="bg-indigo-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-indigo-700 mb-2">动量守恒定律</h4>
+                        <p class="text-gray-700">在没有外力作用的系统中，爆炸前后总动量保持不变。对于静止的初始物体，爆炸后各碎片动量之和应为零：</p>
+                        <div class="font-mono text-sm mt-2 bg-white p-2 rounded">
+                            m₁v₁ + m₂v₂ + ... + mₙvₙ = 0
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 mt-6">实验说明</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                        <li>调整初始物体的质量、碎片数量和爆炸强度等参数</li>
+                        <li>点击"开始"按钮触发爆炸</li>
+                        <li>观察爆炸动画和碎片的运动情况</li>
+                        <li>开启轨迹显示可以观察碎片的运动路径</li>
+                        <li>验证爆炸前后总动量是否守恒</li>
+                    </ol>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg mt-4">
+                        <h4 class="font-semibold text-yellow-700 mb-2">思考问题</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700">
+                            <li>当改变碎片质量分布方式时，爆炸效果有何不同？</li>
+                            <li>增加爆炸强度会如何影响碎片的运动？</li>
+                            <li>爆炸过程中动能和势能如何转换？</li>
+                            <li>为什么爆炸后碎片的总动量仍然保持为零？</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex justify-center md:order-2 space-x-6">
+                    <a href="https://github.com/Lisa94destiny" class="text-gray-400 hover:text-gray-500">
+                        <span class="sr-only">GitHub</span>
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="explosion.js"></script>
+</body>
+</html> 

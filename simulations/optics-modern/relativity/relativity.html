@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狭义相对论可视化 - 物理可视化教学</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS 配置 -->
+    <script>
+        tailwind.config = {
+            mode: 'jit',
+            purge: false, // 开发环境禁用purge
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5E6AD2',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.162.0/three.min.js"></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        /* 防止页面闪烁 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden; /* 防止水平滚动条 */
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* 防止顶部黑线 */
+        nav {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--light-gray);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        /* 标签页样式 */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 动画容器 */
+        #animation-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+        }
+        
+        /* 公式样式 */
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+        
+        /* 光锥样式 */
+        .light-cone {
+            position: relative;
+            margin: 20px auto;
+        }
+        
+        /* 确保p5.js画布正确显示 */
+        canvas {
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../../../categories/optics-modern.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-purple-600"></i>
+                        返回光学与现代物理页面
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-meteor mr-2 text-purple-600"></i>
+                        狭义相对论
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <a href="../../../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-home mr-2 text-purple-600"></i>
+                        首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 标题和介绍 -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">狭义相对论可视化</h1>
+            <p class="text-lg text-gray-600">探索爱因斯坦的狭义相对论，理解时间膨胀、长度收缩和洛伦兹变换等相对论效应。</p>
+        </div>
+        
+        <!-- 标签页导航 -->
+        <div class="mb-6 flex flex-wrap">
+            <button id="tab-time-dilation" class="tab-btn active bg-indigo-600 text-white px-6 py-3 rounded-t-lg mr-1 focus:outline-none">
+                时间膨胀
+            </button>
+            <button id="tab-length-contraction" class="tab-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-t-lg mr-1 focus:outline-none hover:bg-gray-300">
+                长度收缩
+            </button>
+            <button id="tab-lorentz" class="tab-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-t-lg mr-1 focus:outline-none hover:bg-gray-300">
+                洛伦兹变换
+            </button>
+            <button id="tab-light-cone" class="tab-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-t-lg mr-1 focus:outline-none hover:bg-gray-300">
+                光锥与因果关系
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 相对速度控制 -->
+                        <div>
+                            <label for="velocity" class="block text-sm font-medium text-gray-700 mb-2">
+                                相对速度 (v/c)
+                                <span id="velocity-value" class="text-indigo-600 ml-2">0.5</span>
+                            </label>
+                            <input type="range" id="velocity" min="0" max="0.99" value="0.5" step="0.01" class="w-full" 
+                                   oninput="document.getElementById('velocity-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 时间间隔控制 (时间膨胀标签页) -->
+                        <div id="time-dilation-controls" class="tab-specific-control">
+                            <label for="proper-time" class="block text-sm font-medium text-gray-700 mb-2">
+                                静止参考系时间间隔 (秒)
+                                <span id="proper-time-value" class="text-indigo-600 ml-2">10</span>
+                            </label>
+                            <input type="range" id="proper-time" min="1" max="20" value="10" step="1" class="w-full" 
+                                   oninput="document.getElementById('proper-time-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 长度控制 (长度收缩标签页) -->
+                        <div id="length-contraction-controls" class="tab-specific-control" style="display: none;">
+                            <label for="proper-length" class="block text-sm font-medium text-gray-700 mb-2">
+                                静止参考系长度 (米)
+                                <span id="proper-length-value" class="text-indigo-600 ml-2">10</span>
+                            </label>
+                            <input type="range" id="proper-length" min="1" max="20" value="10" step="1" class="w-full" 
+                                   oninput="document.getElementById('proper-length-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 洛伦兹变换控制 -->
+                        <div id="lorentz-controls" class="tab-specific-control" style="display: none;">
+                            <label for="event-time" class="block text-sm font-medium text-gray-700 mb-2">
+                                事件时间 t (秒)
+                                <span id="event-time-value" class="text-indigo-600 ml-2">0</span>
+                            </label>
+                            <input type="range" id="event-time" min="-10" max="10" value="0" step="0.5" class="w-full" 
+                                   oninput="document.getElementById('event-time-value').textContent = this.value">
+                            
+                            <label for="event-position" class="block text-sm font-medium text-gray-700 mt-4 mb-2">
+                                事件位置 x (米)
+                                <span id="event-position-value" class="text-indigo-600 ml-2">0</span>
+                            </label>
+                            <input type="range" id="event-position" min="-10" max="10" value="0" step="0.5" class="w-full" 
+                                   oninput="document.getElementById('event-position-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 光锥控制 -->
+                        <div id="light-cone-controls" class="tab-specific-control" style="display: none;">
+                            <label for="event-separation" class="block text-sm font-medium text-gray-700 mb-2">
+                                事件间隔 (时空距离)
+                                <span id="event-separation-value" class="text-indigo-600 ml-2">5</span>
+                            </label>
+                            <input type="range" id="event-separation" min="1" max="10" value="5" step="0.5" class="w-full" 
+                                   oninput="document.getElementById('event-separation-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 通用控制按钮 -->
+                        <div class="flex space-x-4 pt-4 border-t">
+                            <button id="play-pause" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 btn">
+                                <i class="fas fa-play mr-2"></i>播放
+                            </button>
+                            <button id="reset" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 btn">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 计算结果显示 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">计算结果</h3>
+                    
+                    <!-- 时间膨胀结果 -->
+                    <div id="time-dilation-results" class="tab-specific-result">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">洛伦兹因子 (γ):</p>
+                            <p id="lorentz-factor" class="text-lg font-semibold text-indigo-600">1.155</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">运动参考系时间间隔 (Δt'):</p>
+                            <p id="dilated-time" class="text-lg font-semibold text-indigo-600">11.55 秒</p>
+                        </div>
+                        <div class="formula bg-gray-50 p-3 rounded-lg text-center">
+                            <p>Δt' = γ·Δt = Δt/√(1-v²/c²)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 长度收缩结果 -->
+                    <div id="length-contraction-results" class="tab-specific-result" style="display: none;">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">洛伦兹因子 (γ):</p>
+                            <p id="lorentz-factor-length" class="text-lg font-semibold text-indigo-600">1.155</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">运动参考系长度 (L'):</p>
+                            <p id="contracted-length" class="text-lg font-semibold text-indigo-600">8.66 米</p>
+                        </div>
+                        <div class="formula bg-gray-50 p-3 rounded-lg text-center">
+                            <p>L' = L/γ = L·√(1-v²/c²)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 洛伦兹变换结果 -->
+                    <div id="lorentz-results" class="tab-specific-result" style="display: none;">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">变换后时间 (t'):</p>
+                            <p id="transformed-time" class="text-lg font-semibold text-indigo-600">0 秒</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">变换后位置 (x'):</p>
+                            <p id="transformed-position" class="text-lg font-semibold text-indigo-600">0 米</p>
+                        </div>
+                        <div class="formula bg-gray-50 p-3 rounded-lg text-center">
+                            <p>t' = γ(t - vx/c²)</p>
+                            <p>x' = γ(x - vt)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 光锥结果 -->
+                    <div id="light-cone-results" class="tab-specific-result" style="display: none;">
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">时空间隔 (s²):</p>
+                            <p id="spacetime-interval" class="text-lg font-semibold text-indigo-600">计算中...</p>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">事件关系:</p>
+                            <p id="event-relation" class="text-lg font-semibold text-indigo-600">类时</p>
+                        </div>
+                        <div class="formula bg-gray-50 p-3 rounded-lg text-center">
+                            <p>s² = c²Δt² - Δx²</p>
+                            <p>s² > 0: 类时, s² < 0: 类空, s² = 0: 类光</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧可视化区域 -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <!-- 标签页内容 -->
+                    <div id="time-dilation-content" class="tab-content active p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">时间膨胀效应</h3>
+                        <p class="mb-4 text-gray-600">时间膨胀是指相对于静止参考系，运动参考系中的时钟走得更慢的现象。</p>
+                        
+                        <div id="time-dilation-animation" class="animation-container bg-gray-50 rounded-lg p-4 mb-6" style="height: 400px;">
+                            <!-- p5.js 将在这里渲染动画 -->
+                        </div>
+                        
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">物理解释</h4>
+                            <p class="text-gray-600">
+                                根据狭义相对论，光速在所有惯性参考系中都是恒定的。这导致了运动参考系中的时间流逝速率相对于静止参考系变慢。
+                                这种效应在日常生活中几乎不可察觉，但对于接近光速的物体，效应会变得显著。例如，GPS卫星需要考虑时间膨胀效应
+                                来保持精确定位。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="length-contraction-content" class="tab-content p-6" style="display: none;">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">长度收缩效应</h3>
+                        <p class="mb-4 text-gray-600">长度收缩是指相对于静止参考系，运动物体在运动方向上的长度会收缩的现象。</p>
+                        
+                        <div id="length-contraction-animation" class="animation-container bg-gray-50 rounded-lg p-4 mb-6" style="height: 400px;">
+                            <!-- p5.js 将在这里渲染动画 -->
+                        </div>
+                        
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">物理解释</h4>
+                            <p class="text-gray-600">
+                                长度收缩是相对论性效应，只发生在运动方向上。垂直于运动方向的尺寸不会发生变化。
+                                这种效应是由于空间和时间在不同参考系中的测量方式不同导致的。长度收缩和时间膨胀是同一个现象的不同表现形式。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="lorentz-content" class="tab-content p-6" style="display: none;">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">洛伦兹变换</h3>
+                        <p class="mb-4 text-gray-600">洛伦兹变换描述了不同惯性参考系之间时空坐标的转换关系。</p>
+                        
+                        <div id="lorentz-animation" class="animation-container bg-gray-50 rounded-lg p-4 mb-6" style="height: 400px;">
+                            <!-- p5.js 将在这里渲染动画 -->
+                        </div>
+                        
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">物理解释</h4>
+                            <p class="text-gray-600">
+                                洛伦兹变换取代了经典物理学中的伽利略变换，它保证了光速在所有惯性参考系中都是恒定的。
+                                通过洛伦兹变换，我们可以计算出同一事件在不同参考系中的时空坐标，从而理解相对论效应的本质。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="light-cone-content" class="tab-content p-6" style="display: none;">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">光锥与因果关系</h3>
+                        <p class="mb-4 text-gray-600">光锥是描述时空中事件因果关系的几何结构，定义了哪些事件可能相互影响。</p>
+                        
+                        <div id="light-cone-animation" class="animation-container bg-gray-50 rounded-lg p-4 mb-6" style="height: 400px;">
+                            <!-- p5.js 将在这里渲染动画 -->
+                        </div>
+                        
+                        <div class="bg-indigo-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">物理解释</h4>
+                            <p class="text-gray-600">
+                                光锥将时空分为三个区域：类时区域（可能的未来或过去）、类空区域（无法因果相连的事件）和类光区域（光信号可达的边界）。
+                                只有位于一个事件的未来光锥内的事件才可能被该事件影响，这体现了相对论中的因果律。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                <p class="text-sm text-gray-500 mt-2 sm:mt-0">作者：<span class="text-indigo-600 font-medium">Lisa</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 标签页切换功能 -->
+    <script>
+        // 获取所有标签页按钮和内容
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const tabControls = document.querySelectorAll('.tab-specific-control');
+        const tabResults = document.querySelectorAll('.tab-specific-result');
+        
+        // 初始化标签页状态
+        function initializeTabs() {
+            // 默认显示第一个标签页
+            if (tabButtons.length > 0) {
+                const firstTabId = tabButtons[0].id.replace('tab-', '');
+                
+                // 设置第一个标签为活动状态
+                tabButtons[0].classList.add('active');
+                tabButtons[0].classList.add('bg-indigo-600');
+                tabButtons[0].classList.add('text-white');
+                tabButtons[0].classList.remove('bg-gray-200');
+                tabButtons[0].classList.remove('text-gray-700');
+                tabButtons[0].classList.remove('hover:bg-gray-300');
+                
+                // 显示第一个标签内容
+                const firstContent = document.getElementById(`${firstTabId}-content`);
+                if (firstContent) firstContent.style.display = 'block';
+                
+                // 显示第一个标签的控制面板和结果面板
+                const firstControl = document.getElementById(`${firstTabId}-controls`);
+                if (firstControl) firstControl.style.display = 'block';
+                
+                const firstResult = document.getElementById(`${firstTabId}-results`);
+                if (firstResult) firstResult.style.display = 'block';
+            }
+        }
+        
+        // 为每个标签页按钮添加点击事件
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 获取标签页ID
+                const tabId = button.id.replace('tab-', '');
+                console.log("切换到标签页:", tabId);
+                
+                // 移除所有活动状态
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.remove('bg-indigo-600');
+                    btn.classList.remove('text-white');
+                    btn.classList.add('bg-gray-200');
+                    btn.classList.add('text-gray-700');
+                    btn.classList.add('hover:bg-gray-300');
+                });
+                tabContents.forEach(content => content.style.display = 'none');
+                tabControls.forEach(control => control.style.display = 'none');
+                tabResults.forEach(result => result.style.display = 'none');
+                
+                // 设置当前标签页为活动状态
+                button.classList.add('active');
+                button.classList.add('bg-indigo-600');
+                button.classList.add('text-white');
+                button.classList.remove('bg-gray-200');
+                button.classList.remove('text-gray-700');
+                button.classList.remove('hover:bg-gray-300');
+                
+                // 显示对应的内容区域
+                const contentElement = document.getElementById(`${tabId}-content`);
+                if (contentElement) {
+                    contentElement.style.display = 'block';
+                    console.log(`显示内容区域: ${tabId}-content`);
+                } else {
+                    console.error(`找不到内容区域: ${tabId}-content`);
+                }
+                
+                // 显示对应的控制面板和结果面板
+                const control = document.getElementById(`${tabId}-controls`);
+                if (control) {
+                    control.style.display = 'block';
+                    console.log(`显示控制面板: ${tabId}-controls`);
+                } else {
+                    console.error(`找不到控制面板: ${tabId}-controls`);
+                }
+                
+                const result = document.getElementById(`${tabId}-results`);
+                if (result) {
+                    result.style.display = 'block';
+                    console.log(`显示结果面板: ${tabId}-results`);
+                } else {
+                    console.error(`找不到结果面板: ${tabId}-results`);
+                }
+                
+                // 触发窗口大小调整事件，以确保画布正确调整大小
+                window.dispatchEvent(new Event('resize'));
+                
+                // 如果是第一次切换到这个标签，可能需要重新初始化动画
+                if (tabId === 'lorentz' && typeof lorentzSketch !== 'undefined') {
+                    console.log("尝试重新初始化洛伦兹变换动画");
+                    // 给容器一点时间来显示
+                    setTimeout(() => {
+                        if (typeof setupLorentzSketch === 'function') {
+                            setupLorentzSketch();
+                        }
+                    }, 100);
+                }
+                
+                if (tabId === 'light-cone' && typeof lightConeSketch !== 'undefined') {
+                    console.log("尝试重新初始化光锥动画");
+                    // 给容器一点时间来显示
+                    setTimeout(() => {
+                        if (typeof setupLightConeSketch === 'function') {
+                            setupLightConeSketch();
+                        }
+                    }, 100);
+                }
+            });
+        });
+
+        // 页面加载完成后初始化标签页
+        document.addEventListener('DOMContentLoaded', initializeTabs);
+
+        // 播放/暂停按钮功能已在relativity-main.js中处理，这里不再重复
+        // 重置按钮功能
+        const resetBtn = document.getElementById('reset');
+        resetBtn.addEventListener('click', function() {
+            // 重置速度滑块
+            document.getElementById('velocity').value = 0.5;
+            document.getElementById('velocity-value').textContent = 0.5;
+            
+            // 重置时间膨胀控制
+            document.getElementById('proper-time').value = 10;
+            document.getElementById('proper-time-value').textContent = 10;
+            
+            // 重置长度收缩控制
+            document.getElementById('proper-length').value = 10;
+            document.getElementById('proper-length-value').textContent = 10;
+            
+            // 重置洛伦兹变换控制
+            document.getElementById('event-time').value = 0;
+            document.getElementById('event-time-value').textContent = 0;
+            document.getElementById('event-position').value = 0;
+            document.getElementById('event-position-value').textContent = 0;
+            
+            // 重置光锥控制
+            document.getElementById('event-separation').value = 5;
+            document.getElementById('event-separation-value').textContent = 5;
+            
+            // 播放状态重置在relativity-main.js中处理
+            
+            // 更新计算结果
+            updateCalculations();
+        });
+
+        // 速度滑块事件
+        const velocitySlider = document.getElementById('velocity');
+        velocitySlider.addEventListener('input', updateCalculations);
+
+        // 时间间隔滑块事件
+        const properTimeSlider = document.getElementById('proper-time');
+        properTimeSlider.addEventListener('input', updateCalculations);
+
+        // 长度滑块事件
+        const properLengthSlider = document.getElementById('proper-length');
+        properLengthSlider.addEventListener('input', updateCalculations);
+
+        // 事件时间和位置滑块事件
+        const eventTimeSlider = document.getElementById('event-time');
+        const eventPositionSlider = document.getElementById('event-position');
+        eventTimeSlider.addEventListener('input', updateCalculations);
+        eventPositionSlider.addEventListener('input', updateCalculations);
+
+        // 事件间隔滑块事件
+        const eventSeparationSlider = document.getElementById('event-separation');
+        eventSeparationSlider.addEventListener('input', updateCalculations);
+
+        // 更新计算结果
+        function updateCalculations() {
+            const velocity = parseFloat(velocitySlider.value);
+            
+            // 计算洛伦兹因子
+            const gamma = 1 / Math.sqrt(1 - velocity * velocity);
+            
+            // 更新时间膨胀结果
+            const properTime = parseFloat(properTimeSlider.value);
+            const dilatedTime = properTime * gamma;
+            document.getElementById('lorentz-factor').textContent = gamma.toFixed(3);
+            document.getElementById('dilated-time').textContent = dilatedTime.toFixed(2) + " 秒";
+            
+            // 更新长度收缩结果
+            const properLength = parseFloat(properLengthSlider.value);
+            const contractedLength = properLength / gamma;
+            document.getElementById('lorentz-factor-length').textContent = gamma.toFixed(3);
+            document.getElementById('contracted-length').textContent = contractedLength.toFixed(2) + " 米";
+            
+            // 更新洛伦兹变换结果
+            const eventTime = parseFloat(eventTimeSlider.value);
+            const eventPosition = parseFloat(eventPositionSlider.value);
+            const transformedTime = gamma * (eventTime - velocity * eventPosition);
+            const transformedPosition = gamma * (eventPosition - velocity * eventTime);
+            document.getElementById('transformed-time').textContent = transformedTime.toFixed(2) + " 秒";
+            document.getElementById('transformed-position').textContent = transformedPosition.toFixed(2) + " 米";
+            
+            // 更新光锥结果
+            const eventSeparation = parseFloat(eventSeparationSlider.value);
+            const deltaT = eventSeparation;
+            const deltaX = eventSeparation * 0.5;
+            const spacetimeInterval = deltaT * deltaT - deltaX * deltaX;
+            document.getElementById('spacetime-interval').textContent = spacetimeInterval.toFixed(2);
+            
+            let relation = "类时";
+            if (spacetimeInterval < 0) {
+                relation = "类空";
+            } else if (Math.abs(spacetimeInterval) < 0.01) {
+                relation = "类光";
+            }
+            document.getElementById('event-relation').textContent = relation;
+        }
+
+        // 初始化计算
+        updateCalculations();
+    </script>
+
+    <!-- 引入JavaScript文件 -->
+    <script src="relativity-main.js"></script>
+    <script src="time-dilation.js"></script>
+    <script src="length-contraction.js"></script>
+    <script src="lorentz-transform.js"></script>
+    <script src="light-cone.js"></script>
+</body>
+</html>

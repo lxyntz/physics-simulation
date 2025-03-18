@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>波的二维干涉 - 物理可视化教学</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-ms-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Canvas 容器 */
+        #canvas-container {
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../../categories/waves.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回波动页面
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-water mr-2 text-indigo-600"></i>
+                        波的二维干涉
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <a href="../../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-home mr-2 text-indigo-600"></i>
+                        首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 波源间距控制 -->
+                        <div>
+                            <label for="source-distance" class="block text-sm font-medium text-gray-700 mb-2">
+                                波源间距 (d)
+                                <span id="source-distance-value" class="text-indigo-600 ml-2">100</span>
+                            </label>
+                            <input type="range" id="source-distance" min="50" max="300" value="100" class="w-full" 
+                                   oninput="document.getElementById('source-distance-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 波长控制 -->
+                        <div>
+                            <label for="wavelength" class="block text-sm font-medium text-gray-700 mb-2">
+                                波长 (λ)
+                                <span id="wavelength-value" class="text-indigo-600 ml-2">30</span>
+                            </label>
+                            <input type="range" id="wavelength" min="10" max="50" value="30" class="w-full" 
+                                   oninput="document.getElementById('wavelength-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 振幅控制 -->
+                        <div>
+                            <label for="amplitude" class="block text-sm font-medium text-gray-700 mb-2">
+                                振幅 (A)
+                                <span id="amplitude-value" class="text-indigo-600 ml-2">10</span>
+                            </label>
+                            <input type="range" id="amplitude" min="5" max="20" value="10" class="w-full" 
+                                   oninput="document.getElementById('amplitude-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 波速控制 -->
+                        <div>
+                            <label for="wave-speed" class="block text-sm font-medium text-gray-700 mb-2">
+                                波速 (v)
+                                <span id="wave-speed-value" class="text-indigo-600 ml-2">2</span>
+                            </label>
+                            <input type="range" id="wave-speed" min="0.5" max="5" value="2" step="0.1" class="w-full" 
+                                   oninput="document.getElementById('wave-speed-value').textContent = this.value">
+                        </div>
+                        
+                        <!-- 显示控制 -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-intensity" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-intensity" class="ml-2 block text-sm text-gray-700">显示干涉强度</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-nodal-lines" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-nodal-lines" class="ml-2 block text-sm text-gray-700">显示节线</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-wavefronts" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-wavefronts" class="ml-2 block text-sm text-gray-700">显示波前</label>
+                            </div>
+                        </div>
+                        
+                        <!-- 颜色方案选择 -->
+                        <div>
+                            <label for="color-scheme" class="block text-sm font-medium text-gray-700 mb-2">
+                                颜色方案
+                            </label>
+                            <select id="color-scheme" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full py-2 px-3">
+                                <option value="deep-ocean">深海蓝黄</option>
+                                <option value="electric-contrast">电光对比</option>
+                                <option value="sunset-glow">日落辉光</option>
+                                <option value="neon-pulse">霓虹脉冲</option>
+                                <option value="grayscale">灰度配色</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 按钮组 -->
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button id="reset-btn" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                            <button id="pause-btn" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                                <i class="fas fa-pause mr-2"></i>暂停
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 信息面板 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">测量与观察</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-700">波源位置:</div>
+                            <div id="source-positions" class="text-md font-medium text-indigo-600">
+                                S₁(-50, 0), S₂(50, 0)
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">干涉极值:</div>
+                            <div id="extrema-info" class="text-md font-medium text-gray-800">
+                                相长：r₂ - r₁ = nλ<br>
+                                相消：r₂ - r₁ = (n+1/2)λ
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t">
+                            <div class="text-sm text-gray-700 mb-2">点击画布测量各点的数据:</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-xs text-gray-500">点坐标:</div>
+                                    <div id="click-position" class="text-md font-medium text-gray-800">--</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500">路程差:</div>
+                                    <div id="path-difference" class="text-md font-medium text-gray-800">--</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-2">
+                                <div>
+                                    <div class="text-xs text-gray-500">相对振幅:</div>
+                                    <div id="relative-amplitude" class="text-md font-medium text-gray-800">--</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500">干涉类型:</div>
+                                    <div id="interference-type" class="text-md font-medium text-gray-800">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧模拟区域 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 模拟画布 -->
+                <div id="canvas-container" class="w-full bg-white rounded-xl shadow-md overflow-hidden" style="min-height: 500px;">
+                    <!-- p5.js 将在这里绘制 -->
+                </div>
+                
+                <!-- 实验原理说明 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">波的二维干涉原理</h3>
+                    <p class="text-gray-600 mb-4">
+                        波的二维干涉是波动现象的一种重要表现形式。当两个相干波源在同一介质中同时发出波时，这些波会在空间中相遇并产生干涉。
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        在二维平面上，干涉条件如下：
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-md p-4 my-4">
+                        <div class="text-center">
+                            <span class="text-lg text-gray-800 font-medium">相长干涉：r₂ - r₁ = nλ</span>
+                            <p class="text-sm text-gray-600 mt-1">n = 0, ±1, ±2, ...</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-lg text-gray-800 font-medium">相消干涉：r₂ - r₁ = (n+1/2)λ</span>
+                            <p class="text-sm text-gray-600 mt-1">n = 0, ±1, ±2, ...</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        其中，r₁和r₂分别是从两个波源到观察点的距离，λ是波长。在二维平面上，相长干涉点形成的是一系列双曲线，这些双曲线就是干涉的极大值线；相消干涉点也形成一系列双曲线，即干涉的极小值线（也称节线）。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2024 物理可视化教学平台. 保留所有权利.</p>
+                <p class="text-sm text-gray-500 mt-2 sm:mt-0">作者：<span class="text-indigo-600 font-medium">Lisa</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 实验JavaScript代码 -->
+    <script>
+        // 全局变量
+        let isPaused = false;
+        let showIntensity = true;
+        let showNodalLines = true;
+        let showWavefronts = true;
+        let colorScheme = "deep-ocean";
+        
+        // 点击测量信息
+        let clickPos = { x: null, y: null };
+        
+        // 获取DOM元素
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const showIntensityCheck = document.getElementById('show-intensity');
+        const showNodalLinesCheck = document.getElementById('show-nodal-lines');
+        const showWavefrontsCheck = document.getElementById('show-wavefronts');
+        const colorSchemeSelect = document.getElementById('color-scheme');
+        
+        // 事件监听
+        pauseBtn.addEventListener('click', function() {
+            isPaused = !isPaused;
+            this.innerHTML = isPaused ? 
+                '<i class="fas fa-play mr-2"></i>继续' : 
+                '<i class="fas fa-pause mr-2"></i>暂停';
+        });
+        
+        resetBtn.addEventListener('click', function() {
+            // 重置所有参数到初始值
+            document.getElementById('source-distance').value = 100;
+            document.getElementById('source-distance-value').textContent = 100;
+            
+            document.getElementById('wavelength').value = 30;
+            document.getElementById('wavelength-value').textContent = 30;
+            
+            document.getElementById('amplitude').value = 10;
+            document.getElementById('amplitude-value').textContent = 10;
+            
+            document.getElementById('wave-speed').value = 2;
+            document.getElementById('wave-speed-value').textContent = 2;
+            
+            colorSchemeSelect.value = "deep-ocean";
+            colorScheme = "deep-ocean";
+            
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>暂停';
+            
+            // 重置点击位置
+            clickPos = { x: null, y: null };
+            updateClickInfo();
+        });
+        
+        showIntensityCheck.addEventListener('change', function() {
+            showIntensity = this.checked;
+        });
+        
+        showNodalLinesCheck.addEventListener('change', function() {
+            showNodalLines = this.checked;
+        });
+        
+        showWavefrontsCheck.addEventListener('change', function() {
+            showWavefronts = this.checked;
+        });
+        
+        colorSchemeSelect.addEventListener('change', function() {
+            colorScheme = this.value;
+        });
+        
+        // 更新点击信息
+        function updateClickInfo(pos, s1, s2, wavelength) {
+            if (!pos || pos.x === null) {
+                document.getElementById('click-position').textContent = "--";
+                document.getElementById('path-difference').textContent = "--";
+                document.getElementById('relative-amplitude').textContent = "--";
+                document.getElementById('interference-type').textContent = "--";
+                return;
+            }
+            
+            // 计算点击位置到两个波源的距离
+            let r1 = Math.sqrt((pos.x - s1.x) ** 2 + (pos.y - s1.y) ** 2);
+            let r2 = Math.sqrt((pos.x - s2.x) ** 2 + (pos.y - s2.y) ** 2);
+            
+            // 计算路程差
+            let pathDiff = Math.abs(r2 - r1);
+            
+            // 路程差与波长的比率
+            let ratio = pathDiff / wavelength;
+            
+            // 干涉类型
+            let type = "";
+            if (Math.abs(ratio - Math.round(ratio)) < 0.1) {
+                type = "相长干涉 (极大值)";
+            } else if (Math.abs(ratio - (Math.floor(ratio) + 0.5)) < 0.1) {
+                type = "相消干涉 (极小值)";
+            } else {
+                type = "部分干涉";
+            }
+            
+            // 相对振幅 (0 到 1 之间)
+            let phase = 2 * Math.PI * (pathDiff / wavelength);
+            let relativeAmp = Math.abs(Math.cos(phase / 2));
+            
+            // 更新显示
+            document.getElementById('click-position').textContent = `(${Math.round(pos.x)}, ${Math.round(pos.y)})`;
+            document.getElementById('path-difference').textContent = `${pathDiff.toFixed(1)} (${(pathDiff / wavelength).toFixed(2)}λ)`;
+            document.getElementById('relative-amplitude').textContent = relativeAmp.toFixed(2);
+            document.getElementById('interference-type').textContent = type;
+        }
+        
+        // P5.js 代码
+        let sketch = function(p) {
+            // 模拟参数
+            let canvasWidth, canvasHeight;
+            let sourceDistance, wavelength, amplitude, waveSpeed;
+            let centerX, centerY;
+            let source1, source2;
+            let time = 0;
+            let pixelSize = 2; // 像素大小，用于提高性能
+            
+            p.setup = function() {
+                // 创建与容器同宽的画布
+                const container = document.getElementById('canvas-container');
+                canvasWidth = container.offsetWidth;
+                canvasHeight = 500; // 固定高度
+                
+                let canvas = p.createCanvas(canvasWidth, canvasHeight);
+                canvas.parent('canvas-container');
+                
+                // 初始化位置
+                centerX = canvasWidth / 2;
+                centerY = canvasHeight / 2;
+                
+                // 点击事件
+                canvas.mouseClicked(function() {
+                    // 转换鼠标坐标到相对坐标系
+                    let x = p.mouseX - centerX;
+                    let y = p.mouseY - centerY;
+                    
+                    // 更新点击位置
+                    clickPos = { x: x, y: y };
+                    
+                    // 更新信息显示
+                    updateClickInfo(clickPos, source1, source2, wavelength);
+                    
+                    // 防止默认事件
+                    return false;
+                });
+                
+                p.frameRate(30);
+                p.pixelDensity(1);
+            };
+            
+            p.draw = function() {
+                // 获取当前参数
+                sourceDistance = parseInt(document.getElementById('source-distance').value);
+                wavelength = parseInt(document.getElementById('wavelength').value);
+                amplitude = parseInt(document.getElementById('amplitude').value);
+                waveSpeed = parseFloat(document.getElementById('wave-speed').value);
+                
+                // 计算波源位置
+                source1 = { x: -sourceDistance / 2, y: 0 };
+                source2 = { x: sourceDistance / 2, y: 0 };
+                
+                // 更新波源位置显示
+                document.getElementById('source-positions').textContent = 
+                    `S₁(${source1.x}, ${source1.y}), S₂(${source2.x}, ${source2.y})`;
+                
+                // 更新时间（如果未暂停）
+                if (!isPaused) {
+                    time += 0.1;
+                }
+                
+                // 绘制背景
+                p.background(245, 247, 250);
+                
+                // 绘制干涉图样
+                if (showIntensity) {
+                    drawInterferencePattern();
+                }
+                
+                // 绘制节线（如果启用）
+                if (showNodalLines) {
+                    drawNodalLines();
+                }
+                
+                // 绘制波前（如果启用）
+                if (showWavefronts) {
+                    drawWavefronts();
+                }
+                
+                // 绘制波源
+                drawSources();
+                
+                // 绘制坐标系
+                drawCoordinateSystem();
+                
+                // 绘制点击测量点（如果有）
+                if (clickPos.x !== null) {
+                    drawClickPoint();
+                    
+                    // 刷新测量信息（可能参数已经改变）
+                    updateClickInfo(clickPos, source1, source2, wavelength);
+                }
+            };
+            
+            function drawInterferencePattern() {
+                // 使用像素操作绘制干涉图样
+                p.loadPixels();
+                
+                for (let y = 0; y < canvasHeight; y += pixelSize) {
+                    for (let x = 0; x < canvasWidth; x += pixelSize) {
+                        // 转换为相对坐标
+                        let relX = x - centerX;
+                        let relY = y - centerY;
+                        
+                        // 计算到两个波源的距离
+                        let d1 = Math.sqrt((relX - source1.x) ** 2 + (relY - source1.y) ** 2);
+                        let d2 = Math.sqrt((relX - source2.x) ** 2 + (relY - source2.y) ** 2);
+                        
+                        // 计算相位差
+                        let phase1 = (waveSpeed * time - d1) * (2 * Math.PI / wavelength);
+                        let phase2 = (waveSpeed * time - d2) * (2 * Math.PI / wavelength);
+                        
+                        // 计算振幅衰减 (距离越远振幅越小)
+                        let attenuation1 = Math.min(1, 5 * amplitude / (d1 + 1));
+                        let attenuation2 = Math.min(1, 5 * amplitude / (d2 + 1));
+                        
+                        // 计算合成波的振幅
+                        let a1 = attenuation1 * Math.cos(phase1);
+                        let a2 = attenuation2 * Math.cos(phase2);
+                        let combinedAmplitude = a1 + a2;
+                        
+                        // 归一化振幅到 -1 到 1 之间
+                        let normalizedAmp = combinedAmplitude / (2 * amplitude);
+                        // 转换到 0 到 1 之间
+                        let intensity = (normalizedAmp + 1) / 2;
+                        
+                        // 设置颜色
+                        let col;
+                        switch (colorScheme) {
+                            case "deep-ocean":
+                                // 深蓝到亮黄的高对比度渐变
+                                col = p.lerpColor(
+                                    p.color(0, 52, 89),     // 深海蓝
+                                    p.color(255, 214, 102), // 明亮黄
+                                    intensity
+                                );
+                                break;
+                                
+                            case "electric-contrast":
+                                // 深紫到亮青的强对比渐变
+                                col = p.lerpColor(
+                                    p.color(75, 0, 130),    // 靛蓝
+                                    p.color(0, 255, 217),   // 青绿
+                                    intensity
+                                );
+                                break;
+                                
+                            case "sunset-glow":
+                                // 深红到明黄的暖色渐变
+                                col = p.lerpColor(
+                                    p.color(128, 0, 38),    // 深红
+                                    p.color(255, 183, 77),  // 明黄
+                                    intensity
+                                );
+                                break;
+                                
+                            case "neon-pulse":
+                                // 霓虹风格的高彩度渐变
+                                col = p.lerpColor(
+                                    p.color(255, 0, 153),   // 霓虹粉
+                                    p.color(0, 255, 136),   // 霓虹绿
+                                    intensity
+                                );
+                                break;
+                                
+                            case "grayscale":
+                                // 改进的灰度，增加对比度
+                                let val = Math.pow(intensity, 0.8) * 255; // 指数调整让对比更明显
+                                col = p.color(val, val, val);
+                                break;
+                                
+                            default:
+                                // 默认使用深海蓝黄配色
+                                col = p.lerpColor(
+                                    p.color(0, 52, 89),
+                                    p.color(255, 214, 102),
+                                    intensity
+                                );
+                        }
+                        
+                        // 设置像素颜色
+                        for (let py = 0; py < pixelSize; py++) {
+                            for (let px = 0; px < pixelSize; px++) {
+                                if (x + px < canvasWidth && y + py < canvasHeight) {
+                                    let idx = 4 * ((y + py) * canvasWidth + (x + px));
+                                    p.pixels[idx] = p.red(col);
+                                    p.pixels[idx + 1] = p.green(col);
+                                    p.pixels[idx + 2] = p.blue(col);
+                                    p.pixels[idx + 3] = 255;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                p.updatePixels();
+            }
+            
+            function drawNodalLines() {
+                // 绘制干涉节线 (路程差为半波长的整数倍)
+                p.stroke(255, 255, 255, 180);
+                p.strokeWeight(1);
+                p.noFill();
+                
+                // 计算节线数量 (基于画布大小和波长)
+                let maxLines = Math.floor(Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight) / wavelength);
+                
+                // 绘制每条节线
+                for (let n = 0; n <= maxLines; n++) {
+                    // 相消干涉的路程差: (n + 0.5) * wavelength
+                    let pathDiff = (n + 0.5) * wavelength;
+                    
+                    // 绘制双曲线
+                    p.beginShape();
+                    for (let x = -canvasWidth / 2; x <= canvasWidth / 2; x += 5) {
+                        // 使用双曲线方程计算y值
+                        // 双曲线方程: |r2 - r1| = pathDiff
+                        // 其中r1和r2是到两个焦点(波源)的距离
+                        
+                        // 计算y的平方
+                        let y2 = calculateHyperbolaY2(x, source1.x, source2.x, pathDiff);
+                        
+                        if (y2 >= 0) {
+                            let y = Math.sqrt(y2);
+                            
+                            // 双曲线的上半部分
+                            if (y <= canvasHeight / 2) {
+                                p.vertex(x + centerX, y + centerY);
+                            }
+                        }
+                    }
+                    p.endShape();
+                    
+                    // 绘制双曲线的下半部分
+                    p.beginShape();
+                    for (let x = -canvasWidth / 2; x <= canvasWidth / 2; x += 5) {
+                        let y2 = calculateHyperbolaY2(x, source1.x, source2.x, pathDiff);
+                        
+                        if (y2 >= 0) {
+                            let y = -Math.sqrt(y2);
+                            
+                            if (y >= -canvasHeight / 2) {
+                                p.vertex(x + centerX, y + centerY);
+                            }
+                        }
+                    }
+                    p.endShape();
+                }
+            }
+            
+            function calculateHyperbolaY2(x, x1, x2, pathDiff) {
+                // 计算双曲线上点的y坐标平方值
+                // 使用 |r2 - r1| = pathDiff 的双曲线方程
+                
+                // 双曲线的半焦距
+                let c = Math.abs(x2 - x1) / 2;
+                
+                // 计算y^2
+                let a = pathDiff / 2;  // 半主轴长度
+                let b = Math.sqrt(c * c - a * a);  // 半次轴长度
+                
+                // 双曲线方程的标准形式: (x^2 / a^2) - (y^2 / b^2) = 1
+                // 求解 y^2
+                // 注意，需要将x转换到以中点为原点的坐标系
+                let xCentered = x - (x1 + x2) / 2;
+                return (b * b) * (1 - (xCentered * xCentered) / (a * a));
+            }
+            
+            function drawWavefronts() {
+                // 绘制从两个波源发出的波前
+                p.noFill();
+                
+                // 计算当前时间下的波前半径
+                let maxRadius = Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight);
+                let numWavefronts = Math.floor(maxRadius / wavelength) + 1;
+                
+                // 绘制波源1的波前
+                for (let i = 0; i < numWavefronts; i++) {
+                    let radius = (waveSpeed * time - i * wavelength) % maxRadius;
+                    if (radius < 0) continue;
+                    
+                    let alpha = 150 * (1 - radius / maxRadius);
+                    p.stroke(94, 106, 210, alpha);
+                    p.strokeWeight(1);
+                    p.ellipse(source1.x + centerX, source1.y + centerY, radius * 2, radius * 2);
+                }
+                
+                // 绘制波源2的波前
+                for (let i = 0; i < numWavefronts; i++) {
+                    let radius = (waveSpeed * time - i * wavelength) % maxRadius;
+                    if (radius < 0) continue;
+                    
+                    let alpha = 150 * (1 - radius / maxRadius);
+                    p.stroke(246, 158, 11, alpha);
+                    p.strokeWeight(1);
+                    p.ellipse(source2.x + centerX, source2.y + centerY, radius * 2, radius * 2);
+                }
+            }
+            
+            function drawSources() {
+                // 绘制波源1
+                p.fill(94, 106, 210);
+                p.noStroke();
+                p.ellipse(source1.x + centerX, source1.y + centerY, 10, 10);
+                
+                // 波源1标签
+                p.textAlign(p.CENTER);
+                p.textSize(12);
+                p.text("S₁", source1.x + centerX, source1.y + centerY - 15);
+                
+                // 绘制波源2
+                p.fill(246, 158, 11);
+                p.noStroke();
+                p.ellipse(source2.x + centerX, source2.y + centerY, 10, 10);
+                
+                // 波源2标签
+                p.text("S₂", source2.x + centerX, source2.y + centerY - 15);
+            }
+            
+            function drawCoordinateSystem() {
+                // 绘制坐标轴
+                p.stroke(150, 100);
+                p.strokeWeight(1);
+                
+                // x轴
+                p.line(0, centerY, canvasWidth, centerY);
+                
+                // y轴
+                p.line(centerX, 0, centerX, canvasHeight);
+                
+                // 原点标记
+                p.fill(150);
+                p.noStroke();
+                p.textAlign(p.CENTER);
+                p.textSize(10);
+                p.text("O", centerX - 10, centerY + 15);
+            }
+            
+            function drawClickPoint() {
+                // 绘制点击测量点
+                let x = clickPos.x + centerX;
+                let y = clickPos.y + centerY;
+                
+                // 点击点
+                p.fill(16, 185, 129);
+                p.noStroke();
+                p.ellipse(x, y, 8, 8);
+                
+                // 到波源1的连线
+                p.stroke(94, 106, 210, 150);
+                p.strokeWeight(1);
+                p.line(x, y, source1.x + centerX, source1.y + centerY);
+                
+                // 到波源2的连线
+                p.stroke(246, 158, 11, 150);
+                p.strokeWeight(1);
+                p.line(x, y, source2.x + centerX, source2.y + centerY);
+                
+                // 坐标标签
+                p.fill(16, 185, 129);
+                p.noStroke();
+                p.textAlign(p.LEFT);
+                p.textSize(10);
+                p.text(`(${Math.round(clickPos.x)}, ${Math.round(clickPos.y)})`, x + 10, y - 5);
+            }
+            
+            // 窗口大小变化时调整画布
+            p.windowResized = function() {
+                const container = document.getElementById('canvas-container');
+                canvasWidth = container.offsetWidth;
+                p.resizeCanvas(canvasWidth, canvasHeight);
+                
+                // 重新计算位置
+                centerX = canvasWidth / 2;
+                centerY = canvasHeight / 2;
+            }
+        };
+        
+        // 创建p5实例
+        new p5(sketch);
+    </script>
+</body>
+</html> 

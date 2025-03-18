@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多普勒效应 - 物理可视化教学</title>
+    <!-- 引入外部库 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 样式 -->
+    <style>
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+        }
+        
+        /* Canvas 容器 */
+        #simulation-container {
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../../categories/waves.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回波动页面
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-volume-up mr-2 text-indigo-600"></i>
+                        多普勒效应
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <a href="../../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-home mr-2 text-indigo-600"></i>
+                        首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 场景选择 -->
+                        <div>
+                            <label for="scenario" class="block text-sm font-medium text-gray-700 mb-2">
+                                实验场景
+                            </label>
+                            <select id="scenario" class="rounded-md border border-gray-300 w-full py-2 px-3">
+                                <option value="source-moving">声源运动</option>
+                                <option value="observer-moving">观察者运动</option>
+                                <option value="both-moving">双方同时运动</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 声速控制 -->
+                        <div>
+                            <label for="sound-speed" class="block text-sm font-medium text-gray-700 mb-2">
+                                声速 (m/s)
+                                <span id="sound-speed-value" class="text-indigo-600 ml-2">340</span>
+                            </label>
+                            <input type="range" id="sound-speed" min="200" max="400" value="340" class="w-full">
+                        </div>
+                        
+                        <!-- 声源频率控制 -->
+                        <div>
+                            <label for="source-frequency" class="block text-sm font-medium text-gray-700 mb-2">
+                                声源频率 (Hz)
+                                <span id="source-frequency-value" class="text-indigo-600 ml-2">500</span>
+                            </label>
+                            <input type="range" id="source-frequency" min="200" max="1000" value="500" class="w-full">
+                        </div>
+                        
+                        <!-- 声源速度控制 -->
+                        <div>
+                            <label for="source-speed" class="block text-sm font-medium text-gray-700 mb-2">
+                                声源速度 (m/s)
+                                <span id="source-speed-value" class="text-indigo-600 ml-2">30</span>
+                            </label>
+                            <input type="range" id="source-speed" min="0" max="100" value="30" class="w-full">
+                        </div>
+                        
+                        <!-- 观察者速度控制 -->
+                        <div>
+                            <label for="observer-speed" class="block text-sm font-medium text-gray-700 mb-2">
+                                观察者速度 (m/s)
+                                <span id="observer-speed-value" class="text-indigo-600 ml-2">0</span>
+                            </label>
+                            <input type="range" id="observer-speed" min="0" max="100" value="0" class="w-full">
+                        </div>
+                        
+                        <!-- 显示控制 -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-wavefronts" class="rounded text-indigo-600 h-4 w-4" checked>
+                                <label for="show-wavefronts" class="ml-2 block text-sm text-gray-700">显示波前</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-formula" class="rounded text-indigo-600 h-4 w-4" checked>
+                                <label for="show-formula" class="ml-2 block text-sm text-gray-700">显示计算公式</label>
+                            </div>
+                        </div>
+                        
+                        <!-- 按钮组 -->
+                        <div class="flex space-x-3 pt-4 border-t">
+                            <button id="reset-btn" class="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                            <button id="start-btn" class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition btn">
+                                <i class="fas fa-play mr-2"></i>开始
+                            </button>
+                            <button id="pause-btn" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                                <i class="fas fa-pause mr-2"></i>暂停
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 测量结果面板 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">效应测量</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-700">观察到的频率:</div>
+                            <div id="observed-frequency" class="text-xl font-bold text-indigo-600">500 Hz</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">频率变化:</div>
+                            <div id="frequency-shift" class="text-xl font-bold text-green-600">0 Hz</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧模拟区域 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 模拟画布 -->
+                <div id="simulation-container" class="w-full" style="min-height: 500px;">
+                    <canvas id="simulation-canvas"></canvas>
+                </div>
+                
+                <!-- 实验原理说明 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">多普勒效应原理</h3>
+                    <p class="text-gray-600 mb-4">
+                        多普勒效应是波源和观察者之间存在相对运动时，观察者接收到的波频率与波源发出的频率不同的现象。当波源和观察者相互接近时，观察者接收到的频率增加；当波源和观察者相互远离时，观察者接收到的频率减小。
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        多普勒效应公式：
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-md p-4 my-4">
+                        <div class="text-center">
+                            <span class="text-lg text-gray-800 font-medium">声源运动时：f' = f × [v / (v - vₛ)]</span>
+                            <p class="text-sm text-gray-600 mt-1">vₛ为声源速度，v为声速</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-lg text-gray-800 font-medium">观察者运动时：f' = f × [(v + vₒ) / v]</span>
+                            <p class="text-sm text-gray-600 mt-1">vₒ为观察者速度，v为声速</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                <p class="text-sm text-gray-500 mt-2 sm:mt-0">作者：<span class="text-indigo-600 font-medium">Lisa</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript代码 -->
+    <script>
+    // 等待DOM完全加载
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取DOM元素
+        const canvas = document.getElementById('simulation-canvas');
+        const container = document.getElementById('simulation-container');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scenarioSelect = document.getElementById('scenario');
+        const showWavefrontsCheck = document.getElementById('show-wavefronts');
+        const showFormulaCheck = document.getElementById('show-formula');
+        
+        // 获取滑块并添加事件监听器
+        const soundSpeedSlider = document.getElementById('sound-speed');
+        const sourceFrequencySlider = document.getElementById('source-frequency');
+        const sourceSpeedSlider = document.getElementById('source-speed');
+        const observerSpeedSlider = document.getElementById('observer-speed');
+        
+        // 显示滑块值的元素
+        const soundSpeedValue = document.getElementById('sound-speed-value');
+        const sourceFrequencyValue = document.getElementById('source-frequency-value');
+        const sourceSpeedValue = document.getElementById('source-speed-value');
+        const observerSpeedValue = document.getElementById('observer-speed-value');
+        
+        // 结果显示元素
+        const observedFrequencyElement = document.getElementById('observed-frequency');
+        const frequencyShiftElement = document.getElementById('frequency-shift');
+        
+        // 添加滑块事件
+        soundSpeedSlider.addEventListener('input', function() {
+            soundSpeedValue.textContent = this.value;
+            updateSimulation();
+        });
+        
+        sourceFrequencySlider.addEventListener('input', function() {
+            sourceFrequencyValue.textContent = this.value;
+            updateSimulation();
+        });
+        
+        sourceSpeedSlider.addEventListener('input', function() {
+            sourceSpeedValue.textContent = this.value;
+            updateSimulation();
+        });
+        
+        observerSpeedSlider.addEventListener('input', function() {
+            observerSpeedValue.textContent = this.value;
+            updateSimulation();
+        });
+        
+        scenarioSelect.addEventListener('change', updateSimulation);
+        showWavefrontsCheck.addEventListener('change', updateSimulation);
+        showFormulaCheck.addEventListener('change', updateSimulation);
+        
+        // 设置画布尺寸
+        function resizeCanvas() {
+            canvas.width = container.offsetWidth;
+            canvas.height = 500;
+        }
+        
+        // 初始化
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 模拟状态
+        let isPaused = true;
+        let animationFrameId = null;
+        
+        // 模拟参数
+        let soundSpeed = parseInt(soundSpeedSlider.value);
+        let sourceFrequency = parseInt(sourceFrequencySlider.value);
+        let sourceSpeed = parseInt(sourceSpeedSlider.value);
+        let observerSpeed = parseInt(observerSpeedSlider.value);
+        let showWavefronts = showWavefrontsCheck.checked;
+        let showFormula = showFormulaCheck.checked;
+        
+        // 模拟对象
+        let sourceX = canvas.width * 0.3;
+        let observerX = canvas.width * 0.7;
+        const centerY = canvas.height / 2;
+        let time = 0;
+        
+        // 波前数组
+        let wavefronts = [];
+        const maxWavefronts = 30;
+        
+        // 初始化波前
+        function initWavefronts() {
+            wavefronts = [];
+            for (let i = 0; i < maxWavefronts; i++) {
+                wavefronts.push({
+                    x: sourceX,
+                    radius: 0,
+                    alpha: 0
+                });
+            }
+            
+            // 添加初始可见波前
+            for (let i = 0; i < 5; i++) {
+                wavefronts[i].radius = i * 20;
+                wavefronts[i].alpha = 200 - i * 30;
+            }
+        }
+        
+        // 更新波前
+        function updateWavefronts() {
+            let waveInterval = 0.1; // 每隔0.1秒产生一个新波前
+            
+            for (let i = 0; i < maxWavefronts; i++) {
+                // 波前从声源当前位置发出
+                if (i === 0 || (wavefronts[i-1].radius > soundSpeed * waveInterval * 20)) {
+                    if (wavefronts[i].radius === 0) {
+                        wavefronts[i].x = sourceX;
+                        wavefronts[i].alpha = 255;
+                    }
+                }
+                
+                // 波前半径增加
+                if (wavefronts[i].alpha > 0) {
+                    wavefronts[i].radius += soundSpeed * 0.3;
+                    wavefronts[i].alpha = Math.max(0, wavefronts[i].alpha - 1);
+                }
+            }
+        }
+        
+        // 绘制模拟
+        function drawSimulation() {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景
+            ctx.fillStyle = '#F5F7FA';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制地面
+            ctx.fillStyle = '#DCDCDC';
+            ctx.fillRect(0, centerY + 50, canvas.width, canvas.height - centerY - 50);
+            
+            // 绘制波前
+            if (showWavefronts) {
+                for (let i = 0; i < maxWavefronts; i++) {
+                    if (wavefronts[i].alpha > 0) {
+                        ctx.beginPath();
+                        ctx.arc(wavefronts[i].x, centerY, wavefronts[i].radius, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(64, 87, 229, ${wavefronts[i].alpha / 255})`;
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // 绘制声源
+            ctx.fillStyle = '#F59E0B';
+            ctx.beginPath();
+            ctx.arc(sourceX, centerY, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 声源标签
+            ctx.fillStyle = '#F59E0B';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`f = ${sourceFrequency} Hz`, sourceX, centerY - 25);
+            
+            // 绘制声源图标
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('♫', sourceX, centerY + 5);
+            
+            // 绘制观察者
+            ctx.fillStyle = '#10B981';
+            ctx.beginPath();
+            ctx.arc(observerX, centerY, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 观察者标签
+            let observedFrequency = calculateObservedFrequency();
+            ctx.fillStyle = '#10B981';
+            ctx.font = '12px Arial';
+            ctx.fillText(`f' = ${Math.round(observedFrequency)} Hz`, observerX, centerY - 25);
+            
+            // 绘制观察者图标
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '16px Arial';
+            ctx.fillText('👂', observerX, centerY + 5);
+            
+            // 绘制公式和说明
+            if (showFormula) {
+                ctx.fillStyle = '#4B5563';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'left';
+                
+                let x = 20;
+                let y = 30;
+                let lineHeight = 20;
+                
+                ctx.fillText("多普勒效应计算:", x, y);
+                y += lineHeight;
+                
+                let scenario = scenarioSelect.value;
+                if (scenario === 'source-moving') {
+                    ctx.fillText("声源向观察者运动:", x, y);
+                    y += lineHeight;
+                    ctx.fillText("f' = f × [v / (v - vₛ)]", x, y);
+                    y += lineHeight;
+                } else if (scenario === 'observer-moving') {
+                    ctx.fillText("观察者向声源运动:", x, y);
+                    y += lineHeight;
+                    ctx.fillText("f' = f × [(v + vₒ) / v]", x, y);
+                    y += lineHeight;
+                } else if (scenario === 'both-moving') {
+                    ctx.fillText("声源和观察者同时运动:", x, y);
+                    y += lineHeight;
+                    ctx.fillText("f' = f × [(v + vₒ) / (v - vₛ)]", x, y);
+                    y += lineHeight;
+                }
+                
+                ctx.fillText(`声源频率(f): ${sourceFrequency} Hz`, x, y);
+                y += lineHeight;
+                ctx.fillText(`声速(v): ${soundSpeed} m/s`, x, y);
+                y += lineHeight;
+                
+                if (scenario === 'source-moving' || scenario === 'both-moving') {
+                    ctx.fillText(`声源速度(vₛ): ${sourceSpeed} m/s`, x, y);
+                    y += lineHeight;
+                }
+                
+                if (scenario === 'observer-moving' || scenario === 'both-moving') {
+                    ctx.fillText(`观察者速度(vₒ): ${observerSpeed} m/s`, x, y);
+                    y += lineHeight;
+                }
+                
+                ctx.fillText(`观察到的频率(f'): ${Math.round(observedFrequency)} Hz`, x, y);
+            }
+            
+            // 如果是暂停状态，显示提示
+            if (isPaused) {
+                ctx.fillStyle = '#000000';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("点击'开始'按钮运行模拟", canvas.width / 2, 50);
+            }
+        }
+        
+        // 计算观察到的频率
+        function calculateObservedFrequency() {
+            let scenario = scenarioSelect.value;
+            let observedFrequency = sourceFrequency;
+            
+            if (scenario === 'source-moving') {
+                if (sourceSpeed >= soundSpeed) {
+                    sourceSpeed = soundSpeed - 1;
+                    sourceSpeedSlider.value = sourceSpeed;
+                    sourceSpeedValue.textContent = sourceSpeed;
+                }
+                observedFrequency = sourceFrequency * (soundSpeed / (soundSpeed - sourceSpeed));
+            } else if (scenario === 'observer-moving') {
+                observedFrequency = sourceFrequency * ((soundSpeed + observerSpeed) / soundSpeed);
+            } else if (scenario === 'both-moving') {
+                if (sourceSpeed >= soundSpeed) {
+                    sourceSpeed = soundSpeed - 1;
+                    sourceSpeedSlider.value = sourceSpeed;
+                    sourceSpeedValue.textContent = sourceSpeed;
+                }
+                observedFrequency = sourceFrequency * ((soundSpeed + observerSpeed) / (soundSpeed - sourceSpeed));
+            }
+            
+            return observedFrequency;
+        }
+        
+        // 更新模拟数据
+        function updateSimulation() {
+            // 更新参数
+            soundSpeed = parseInt(soundSpeedSlider.value);
+            sourceFrequency = parseInt(sourceFrequencySlider.value);
+            sourceSpeed = parseInt(sourceSpeedSlider.value);
+            observerSpeed = parseInt(observerSpeedSlider.value);
+            showWavefronts = showWavefrontsCheck.checked;
+            showFormula = showFormulaCheck.checked;
+            
+            // 计算和显示结果
+            let observedFrequency = calculateObservedFrequency();
+            observedFrequencyElement.innerText = Math.round(observedFrequency) + " Hz";
+            frequencyShiftElement.innerText = Math.round(observedFrequency - sourceFrequency) + " Hz";
+            
+            // 重新绘制
+            drawSimulation();
+        }
+        
+        // 动画循环
+        function animate() {
+            if (!isPaused) {
+                // 更新时间
+                time += 0.03;
+                
+                // 更新位置
+                let scenario = scenarioSelect.value;
+                if (scenario === 'source-moving' || scenario === 'both-moving') {
+                    sourceX += sourceSpeed * 0.3;
+                    if (sourceX > canvas.width * 0.9) {
+                        sourceX = canvas.width * 0.1;
+                        initWavefronts();
+                    }
+                }
+                
+                if (scenario === 'observer-moving' || scenario === 'both-moving') {
+                    observerX += observerSpeed * 0.3;
+                    if (observerX > canvas.width * 0.9) {
+                        observerX = canvas.width * 0.1;
+                    }
+                }
+                
+                // 更新波前
+                updateWavefronts();
+                
+                // 更新显示
+                updateSimulation();
+                
+                // 继续动画
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        }
+        
+        // 按钮事件
+        startBtn.addEventListener('click', function() {
+            isPaused = false;
+            this.innerHTML = '<i class="fas fa-play mr-2"></i>运行中...';
+            pauseBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>暂停';
+            
+            // 启动动画
+            if (!animationFrameId) {
+                animate();
+            }
+        });
+        
+        pauseBtn.addEventListener('click', function() {
+            isPaused = true;
+            this.innerHTML = '<i class="fas fa-pause mr-2"></i>已暂停';
+            startBtn.innerHTML = '<i class="fas fa-play mr-2"></i>开始';
+            
+            // 停止动画
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        });
+        
+        resetBtn.addEventListener('click', function() {
+            // 重置参数到初始值
+            soundSpeedSlider.value = 340;
+            soundSpeedValue.textContent = 340;
+            
+            sourceFrequencySlider.value = 500;
+            sourceFrequencyValue.textContent = 500;
+            
+            sourceSpeedSlider.value = 30;
+            sourceSpeedValue.textContent = 30;
+            
+            observerSpeedSlider.value = 0;
+            observerSpeedValue.textContent = 0;
+            
+            scenarioSelect.value = "source-moving";
+            
+            // 重置状态
+            isPaused = true;
+            time = 0;
+            sourceX = canvas.width * 0.3;
+            observerX = canvas.width * 0.7;
+            
+            // 重置UI
+            startBtn.innerHTML = '<i class="fas fa-play mr-2"></i>开始';
+            pauseBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>暂停';
+            
+            // 重置波前
+            initWavefronts();
+            
+            // 更新显示
+            updateSimulation();
+            
+            // 停止动画
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        });
+        
+        // 初始化波前并绘制初始状态
+        initWavefronts();
+        drawSimulation();
+    });
+    </script>
+</body>
+</html> 

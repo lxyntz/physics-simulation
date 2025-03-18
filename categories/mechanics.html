@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>力学 - 物理可视化教学平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 搜索组件 -->
+    <script src="search.js" defer></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回首页
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="category-dropdown" class="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">
+                            <span>物理领域</span>
+                            <i class="fas fa-chevron-down ml-1"></i>
+                        </button>
+                        <div id="category-menu" class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                            <div class="py-1" role="menu" aria-orientation="vertical">
+                                <a href="mechanics.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-semibold" role="menuitem">力学</a>
+                                <a href="electromagnetism.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">电磁学</a>
+                                <a href="waves.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">振动与波动</a>
+                                <a href="optics-modern.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">光学与现代物理</a>
+                                <a href="interdisciplinary.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">交叉领域与实验技能</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 力学介绍 -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:flex-1 p-8 md:p-12 text-white">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4">力学</h1>
+                        <p class="text-lg md:text-xl mb-6 opacity-90">研究物体运动与力的相互关系</p>
+                        <p class="mb-8 opacity-80">力学是物理学的基础领域，研究物体在各种力的作用下的运动规律。包括牛顿力学、流体力学、刚体运动和能量守恒等内容。</p>
+                    </div>
+                    <div class="md:flex-1 flex items-center justify-center p-8 md:p-12 bg-indigo-800 bg-opacity-30">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="rounded-lg shadow-lg max-h-80 w-full" style="background-color: rgba(255,255,255,0.1)">
+                            <!-- 力学图标 - 牛顿摆 -->
+                            <line x1="40" y1="50" x2="160" y2="50" stroke="#ffffff" stroke-width="3"/>
+                            <!-- 绳子 -->
+                            <line x1="60" y1="50" x2="60" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="80" y1="50" x2="80" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="100" y1="50" x2="100" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="120" y1="50" x2="120" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="140" y1="50" x2="140" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+                            <!-- 小球 -->
+                            <circle cx="60" cy="130" r="10" fill="#ffffff" opacity="0.8"/>
+                            <circle cx="80" cy="130" r="10" fill="#ffffff" opacity="0.8"/>
+                            <circle cx="100" cy="130" r="10" fill="#ffffff" opacity="0.8"/>
+                            <circle cx="120" cy="130" r="10" fill="#ffffff" opacity="0.8"/>
+                            <circle cx="140" cy="130" r="10" fill="#ffffff" opacity="0.8"/>
+                            <!-- 一个摆动的小球 -->
+                            <line x1="40" y1="50" x2="25" y2="110" stroke="#ffffff" stroke-width="1.5"/>
+                            <circle cx="25" cy="120" r="10" fill="#F59E0B"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 搜索和过滤部分 -->
+        <section class="mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="md:flex md:items-center md:justify-between">
+                    <div class="relative md:w-1/2">
+                        <input type="text" id="search-input" placeholder="搜索力学模块..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <div class="absolute left-3 top-2.5 text-gray-400">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <select id="filter-difficulty" class="rounded-md border border-gray-300 px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="all">所有难度</option>
+                            <option value="basic">基础</option>
+                            <option value="intermediate">中级</option>
+                            <option value="advanced">高级</option>
+                        </select>
+                        <select id="filter-category" class="rounded-md border border-gray-300 px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="all">所有分类</option>
+                            <option value="newtonian">牛顿力学</option>
+                            <option value="energy">能量与功</option>
+                            <option value="momentum">动量与碰撞</option>
+                            <option value="rotation">旋转运动</option>
+                            <option value="fluid">流体力学</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模块列表 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">力学模块</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 动量守恒模型 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="momentum" data-difficulty="intermediate">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 水面 -->
+                            <rect x="0" y="150" width="200" height="50" fill="#5E6AD2" opacity="0.3"/>
+                            <!-- 船 -->
+                            <path d="M 50 130 L 150 130 L 160 150 L 40 150 Z" fill="#F59E0B"/>
+                            <!-- 人物 -->
+                            <circle cx="100" cy="90" r="10" fill="#10B981"/>
+                            <line x1="100" y1="100" x2="100" y2="120" stroke="#10B981" stroke-width="4"/>
+                            <line x1="100" y1="105" x2="85" y2="115" stroke="#10B981" stroke-width="3"/>
+                            <line x1="100" y1="105" x2="115" y2="115" stroke="#10B981" stroke-width="3"/>
+                            <line x1="100" y1="120" x2="90" y2="130" stroke="#10B981" stroke-width="3"/>
+                            <line x1="100" y1="120" x2="110" y2="130" stroke="#10B981" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">动量守恒模型</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索动量守恒定律在不同物理系统中的应用和表现。</p>
+                        <a href="../simulations/mechanics/momentum-conservation.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-exchange-alt mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 斜面运动 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="newtonian" data-difficulty="basic">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 斜面 -->
+                            <polygon points="30,150 170,70 170,150" fill="#E5E7EB"/>
+                            <line x1="30" y1="150" x2="170" y2="70" stroke="#6B7280" stroke-width="2"/>
+                            <!-- 小球 -->
+                            <circle cx="100" cy="110" r="10" fill="#F59E0B"/>
+                            <!-- 力的分解 -->
+                            <line x1="100" y1="110" x2="100" y2="150" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+                            <line x1="100" y1="110" x2="70" y2="130" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3,2"/>
+                            <line x1="100" y1="110" x2="100" y2="80" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="3,2"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">斜面运动</h3>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">研究物体在斜面上的运动，包括力的分解、摩擦力与加速度的关系。</p>
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 能量守恒 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="energy" data-difficulty="intermediate">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 轨道 -->
+                            <path d="M 20,150 Q 60,50 100,120 Q 140,190 180,100" fill="none" stroke="#6B7280" stroke-width="2"/>
+                            <!-- 小球 -->
+                            <circle cx="60" cy="50" r="10" fill="#F59E0B"/>
+                            <!-- 能量显示 -->
+                            <rect x="20" y="20" width="40" height="10" fill="#EF4444"/>
+                            <text x="65" y="30" font-size="10" fill="#111827">动能</text>
+                            <rect x="20" y="35" width="40" height="10" fill="#10B981"/>
+                            <text x="65" y="45" font-size="10" fill="#111827">势能</text>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">能量守恒</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索动能和势能的转换，验证机械能守恒定律。</p>
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 牛顿摆 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="momentum" data-difficulty="basic">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 支架 -->
+                            <line x1="40" y1="50" x2="160" y2="50" stroke="#6B7280" stroke-width="3"/>
+                            <!-- 绳子 -->
+                            <line x1="60" y1="50" x2="60" y2="120" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="80" y1="50" x2="80" y2="120" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="100" y1="50" x2="100" y2="120" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="120" y1="50" x2="120" y2="120" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="140" y1="50" x2="140" y2="120" stroke="#6B7280" stroke-width="1"/>
+                            <!-- 小球 -->
+                            <circle cx="60" cy="130" r="10" fill="#5E6AD2"/>
+                            <circle cx="80" cy="130" r="10" fill="#5E6AD2"/>
+                            <circle cx="100" cy="130" r="10" fill="#5E6AD2"/>
+                            <circle cx="120" cy="130" r="10" fill="#5E6AD2"/>
+                            <circle cx="140" cy="130" r="10" fill="#5E6AD2"/>
+                            <!-- 一个摆动的小球 -->
+                            <line x1="40" y1="50" x2="25" y2="110" stroke="#6B7280" stroke-width="1"/>
+                            <circle cx="25" cy="120" r="10" fill="#F59E0B"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">牛顿摆</h3>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">研究动量和能量在碰撞中的传递过程。</p>
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 万有引力与轨道运动 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="newtonian" data-difficulty="advanced">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 中心天体 -->
+                            <circle cx="100" cy="100" r="20" fill="#5E6AD2"/>
+                            <!-- 轨道 -->
+                            <ellipse cx="100" cy="100" rx="80" ry="50" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
+                            <!-- 行星 -->
+                            <circle cx="170" cy="100" r="10" fill="#F59E0B"/>
+                            <!-- 速度矢量 -->
+                            <line x1="170" y1="100" x2="170" y2="70" stroke="#10B981" stroke-width="1.5"/>
+                            <polygon points="170,70 175,75 165,75" fill="#10B981"/>
+                            <!-- 引力矢量 -->
+                            <line x1="170" y1="100" x2="155" y2="100" stroke="#EF4444" stroke-width="1.5"/>
+                            <polygon points="155,100 160,105 160,95" fill="#EF4444"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">万有引力与轨道运动</h3>
+                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">模拟天体在万有引力作用下的轨道运动，研究开普勒定律。</p>
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 流体力学 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="fluid" data-difficulty="advanced">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 水箱 -->
+                            <rect x="40" y="60" width="120" height="100" fill="none" stroke="#6B7280" stroke-width="2"/>
+                            <!-- 水 -->
+                            <rect x="40" y="100" width="120" height="60" fill="#3B82F6" opacity="0.4"/>
+                            <!-- 流体流动线 -->
+                            <path d="M 40,120 Q 60,110 80,120 Q 100,130 120,120 Q 140,110 160,120" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
+                            <path d="M 40,130 Q 60,140 80,130 Q 100,120 120,130 Q 140,140 160,130" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
+                            <!-- 喷口 -->
+                            <rect x="160" y="110" width="5" height="10" fill="#6B7280"/>
+                            <!-- 喷出的水流 -->
+                            <path d="M 165,115 Q 185,130 185,150" fill="none" stroke="#3B82F6" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">流体力学实验</h3>
+                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">研究流体的压强、流速和伯努利定律，观察连通器原理。</p>
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-8 md:mb-0">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">高中物理可视化教学平台</h3>
+                    <p class="text-gray-600">让抽象的物理概念变得直观易懂</p>
+                </div>
+                <div class="grid grid-cols-2 gap-8 md:grid-cols-3">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-800 mb-4">资源链接</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-indigo-600">教学指南</a></li>
+                            <li><a href="#" class="hover:text-indigo-600">常见问题</a></li>
+                            <li><a href="#" class="hover:text-indigo-600">更新日志</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-800 mb-4">相关资源</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-indigo-600">物理教学资料</a></li>
+                            <li><a href="#" class="hover:text-indigo-600">实验指导</a></li>
+                            <li><a href="#" class="hover:text-indigo-600">学习社区</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-200 md:flex md:items-center md:justify-between">
+                <p class="text-sm text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="https://github.com/Lisa94destiny" target="_blank" class="text-gray-400 hover:text-indigo-600">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-indigo-600">
+                        <i class="fab fa-weixin"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-indigo-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M17 7L7 17M7 7l10 10" />
+                        </svg>
+                    </a>
+                    <a href="https://x.com/AIstardustX" target="_blank" class="text-gray-400 hover:text-indigo-600">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 下拉菜单切换
+        const categoryDropdown = document.getElementById('category-dropdown');
+        const categoryMenu = document.getElementById('category-menu');
+        
+        categoryDropdown.addEventListener('click', (e) => {
+            e.preventDefault();
+            categoryMenu.classList.toggle('hidden');
+        });
+        
+        // 点击页面其他地方关闭下拉菜单
+        document.addEventListener('click', (e) => {
+            if (!categoryDropdown.contains(e.target) && !categoryMenu.contains(e.target)) {
+                categoryMenu.classList.add('hidden');
+            }
+        });
+        
+        // 搜索和过滤功能
+        const searchInput = document.getElementById('search-input');
+        const difficultyFilter = document.getElementById('filter-difficulty');
+        const categoryFilter = document.getElementById('filter-category');
+        const moduleCards = document.querySelectorAll('.card');
+        
+        function filterModules() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const difficultyValue = difficultyFilter.value;
+            const categoryValue = categoryFilter.value;
+            
+            moduleCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const difficulty = card.dataset.difficulty;
+                const category = card.dataset.category;
+                
+                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                const matchesDifficulty = difficultyValue === 'all' || difficulty === difficultyValue;
+                const matchesCategory = categoryValue === 'all' || category === categoryValue;
+                
+                if (matchesSearch && matchesDifficulty && matchesCategory) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', filterModules);
+        difficultyFilter.addEventListener('change', filterModules);
+        categoryFilter.addEventListener('change', filterModules);
+    </script>
+</body>
+</html> 
