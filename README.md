@@ -1,6 +1,6 @@
 # 高中物理可视化教学平台
 
-<a href="https://lisa94destiny.github.io/physics-simulation/" target="_blank">https://lisa94destiny.github.io/physics-simulation/</a>
+https://lisa94destiny.github.io/physics-simulation/
 
 这是一个专为高中物理教学设计的交互式可视化模拟平台。通过直观的动画和交互控制，帮助学生更好地理解物理概念和原理。
 
@@ -9,7 +9,6 @@
 - Lisa（stardust）
 - AI探索者，物理教育者，开源~
 - 个人公众号：Lisa是个机器人
-- 强烈致谢：歸藏大佬的前端提示词<a href="https://x.com/op7418/status/1899028568962941147" target="_blank">https://x.com/op7418/status/1899028568962941147</a>
 - 欢迎各位老师来交流讨论提需求~
 
 ## 项目特点
