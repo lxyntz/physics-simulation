@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>速度选择器 - 物理可视化教学</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Math.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- 自定义脚本 -->
+    <script src="velocity-selector.js" defer></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块自定义样式 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Canvas 容器 */
+        #canvas-container {
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px; /* 增加高度 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../../categories/electromagnetism.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回电磁学页面
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-atom mr-2 text-indigo-600"></i>
+                        速度选择器
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <a href="../../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-home mr-2 text-indigo-600"></i>
+                        首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">实验参数控制</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 粒子属性控制 -->
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-700 mb-4">粒子属性</h4>
+                            
+                            <!-- 粒子类型选择 -->
+                            <div class="mb-4">
+                                <label for="particle-type" class="block text-sm font-medium text-gray-700 mb-2">粒子类型</label>
+                                <select id="particle-type" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                    <option value="electron">电子 (e⁻)</option>
+                                    <option value="proton">质子 (p⁺)</option>
+                                    <option value="alpha">α粒子 (He²⁺)</option>
+                                    <option value="custom">自定义粒子</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 质量控制 (自定义粒子时可编辑) -->
+                            <div class="mb-4">
+                                <label for="particle-mass" class="block text-sm font-medium text-gray-700 mb-2">
+                                    粒子质量 (× 10⁻²⁷ kg)
+                                    <span id="mass-value" class="text-indigo-600 ml-2">9.11</span>
+                                </label>
+                                <input type="range" id="particle-mass" min="0.1" max="100" value="9.11" step="0.01" class="w-full" 
+                                       oninput="document.getElementById('mass-value').textContent = this.value"
+                                       disabled>
+                            </div>
+                            
+                            <!-- 电荷控制 (自定义粒子时可编辑) -->
+                            <div class="mb-4">
+                                <label for="particle-charge" class="block text-sm font-medium text-gray-700 mb-2">
+                                    电荷量 (× 10⁻¹⁹ C)
+                                    <span id="charge-value" class="text-indigo-600 ml-2">-1.60</span>
+                                </label>
+                                <input type="range" id="particle-charge" min="-10" max="10" value="-1.60" step="0.01" class="w-full" 
+                                       oninput="document.getElementById('charge-value').textContent = this.value"
+                                       disabled>
+                            </div>
+                            
+                            <!-- 粒子速度控制 -->
+                            <div>
+                                <label for="particle-velocity" class="block text-sm font-medium text-gray-700 mb-2">
+                                    入射速度 (× 10⁶ m/s)
+                                    <span id="velocity-value" class="text-indigo-600 ml-2">1.00</span>
+                                </label>
+                                <input type="range" id="particle-velocity" min="0.1" max="10" value="1.00" step="0.1" class="w-full" 
+                                       oninput="document.getElementById('velocity-value').textContent = this.value">
+                            </div>
+                        </div>
+                        
+                        <!-- 电场控制 -->
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-700 mb-4">电场设置</h4>
+                            
+                            <!-- 电场强度控制 -->
+                            <div class="mb-4">
+                                <label for="electric-field" class="block text-sm font-medium text-gray-700 mb-2">
+                                    电场强度 (× 10³ V/m)
+                                    <span id="electric-field-value" class="text-indigo-600 ml-2">5.00</span>
+                                </label>
+                                <input type="range" id="electric-field" min="0" max="20" value="5.00" step="0.1" class="w-full" 
+                                       oninput="document.getElementById('electric-field-value').textContent = this.value">
+                            </div>
+                            
+                            <!-- 电场方向控制 -->
+                            <div class="mb-4">
+                                <label for="electric-field-direction" class="block text-sm font-medium text-gray-700 mb-2">电场方向</label>
+                                <select id="electric-field-direction" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                    <option value="up">向上 (↑)</option>
+                                    <option value="down">向下 (↓)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 电极间距控制 -->
+                            <div>
+                                <label for="plate-distance" class="block text-sm font-medium text-gray-700 mb-2">
+                                    电极间距 (cm)
+                                    <span id="plate-distance-value" class="text-indigo-600 ml-2">8.0</span>
+                                </label>
+                                <input type="range" id="plate-distance" min="0.5" max="13.0" value="8.0" step="0.1" class="w-full" 
+                                       oninput="document.getElementById('plate-distance-value').textContent = this.value">
+                            </div>
+                        </div>
+                        
+                        <!-- 磁场控制 -->
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-700 mb-4">磁场设置</h4>
+                            
+                            <!-- 磁场强度控制 -->
+                            <div class="mb-4">
+                                <label for="magnetic-field" class="block text-sm font-medium text-gray-700 mb-2">
+                                    磁场强度 (T)
+                                    <span id="magnetic-field-value" class="text-indigo-600 ml-2">0.50</span>
+                                </label>
+                                <input type="range" id="magnetic-field" min="0" max="2" value="0.50" step="0.01" class="w-full" 
+                                       oninput="document.getElementById('magnetic-field-value').textContent = this.value">
+                            </div>
+                            
+                            <!-- 磁场方向控制 - 修正符号 -->
+                            <div>
+                                <label for="magnetic-field-direction" class="block text-sm font-medium text-gray-700 mb-2">磁场方向</label>
+                                <select id="magnetic-field-direction" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                    <option value="in">垂直屏幕向内 (×)</option>
+                                    <option value="out">垂直屏幕向外 (⊙)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 显示控制 -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-trajectories" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-trajectories" class="ml-2 block text-sm text-gray-700">显示粒子轨迹</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-field-lines" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4" checked>
+                                <label for="show-field-lines" class="ml-2 block text-sm text-gray-700">显示场线</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="show-forces" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4">
+                                <label for="show-forces" class="ml-2 block text-sm text-gray-700">显示力分析</label>
+                            </div>
+                            
+                            <!-- 演示模式选择 -->
+                            <div class="mt-4">
+                                <label for="demo-mode" class="block text-sm font-medium text-gray-700 mb-2">演示模式</label>
+                                <select id="demo-mode" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                    <option value="single">单个粒子</option>
+                                    <option value="multiple">一批相同粒子</option>
+                                    <option value="various">不同速度粒子比较</option>
+                                    <option value="balance">速度选择平衡演示</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 计算结果面板 -->
+                <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-6 text-gray-800 border-b pb-2">理论计算</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-700">洛伦兹力平衡条件:</div>
+                            <div class="text-lg font-medium text-indigo-600">qE = qvB</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">选择速度 v = E/B:</div>
+                            <div id="selected-velocity" class="text-xl font-bold text-green-600">1.00 × 10⁶ m/s</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-700">实际速度与选择速度之比:</div>
+                            <div id="velocity-ratio" class="text-xl font-bold text-orange-600">1.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧模拟区域 - 增加宽度和居中设计 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 模拟画布 -->
+                <div id="canvas-container" class="w-full bg-white rounded-xl shadow-md overflow-hidden">
+                    <!-- p5.js 将在这里绘制 -->
+                </div>
+                
+                <!-- 添加按钮组到模拟区域下方 -->
+                <div class="bg-white rounded-xl shadow-md p-4">
+                    <div class="flex space-x-3">
+                        <button id="reset-btn" class="flex-1 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition btn">
+                            <i class="fas fa-redo-alt mr-2"></i>重置
+                        </button>
+                        <button id="pause-btn" class="flex-1 bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始
+                        </button>
+                    </div>
+                    <!-- 添加当前平衡速度显示 -->
+                    <div class="mt-3 text-center bg-gray-50 p-2 rounded-lg">
+                        <span class="text-sm text-gray-700">当前平衡速度：</span>
+                        <span id="balance-velocity-value" class="text-md font-semibold text-indigo-600">1.00 × 10⁶ m/s</span>
+                    </div>
+                </div>
+                
+                <!-- 实验原理说明 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">速度选择器原理</h3>
+                    <p class="text-gray-600 mb-4">
+                        速度选择器是一种利用垂直交叉的电场和磁场来选择特定速度的带电粒子的装置。当带电粒子通过这种交叉场时，它们会同时受到电场力和磁场力的作用。
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        对于电荷为q的粒子，电场力为F<sub>E</sub> = qE，方向与电场方向相同或相反（取决于电荷符号）；磁场力为F<sub>B</sub> = qvB·sinθ，方向垂直于速度和磁场方向。在速度选择器中，通常使磁场力与电场力方向相反，且磁场垂直于粒子运动方向（sinθ = 1）。
+                    </p>
+                    <div class="bg-gray-50 rounded-md p-4 text-center my-4">
+                        <span class="text-lg text-gray-800 font-medium">当 qE = qvB 时，电场力与磁场力平衡，粒子直线穿过</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        即当粒子速度 v = E/B 时，电场力与磁场力大小相等方向相反，粒子将沿直线通过选择器。速度低于这个值的粒子将向一个方向偏转，速度高于这个值的粒子将向相反方向偏转。
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        速度选择器广泛应用于质谱仪、同位素分离器等设备中，是物理研究和工业应用的重要工具。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                <p class="text-sm text-gray-500 mt-2 sm:mt-0">作者：<span class="text-indigo-600 font-medium">Lisa</span></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -365,6 +365,60 @@
                         </a>
                     </div>
                 </div>
+                
+                <!-- 速度选择器 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="magnetism" data-difficulty="intermediate">
+                    <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
+                            <!-- 电极板 -->
+                            <rect x="40" y="50" width="120" height="5" fill="#6B7280"/>
+                            <rect x="40" y="145" width="120" height="5" fill="#6B7280"/>
+                            
+                            <!-- 电场线 -->
+                            <line x1="60" y1="60" x2="60" y2="140" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="80" y1="60" x2="80" y2="140" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="100" y1="60" x2="100" y2="140" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="120" y1="60" x2="120" y2="140" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="140" y1="60" x2="140" y2="140" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,2"/>
+                            
+                            <!-- 电场箭头 -->
+                            <polygon points="60,75 57,80 63,80" fill="#EF4444"/>
+                            <polygon points="100,75 97,80 103,80" fill="#EF4444"/>
+                            <polygon points="140,75 137,80 143,80" fill="#EF4444"/>
+                            
+                            <!-- 磁场符号（向内） -->
+                            <circle cx="60" cy="80" r="3" fill="#3B82F6"/>
+                            <circle cx="60" cy="100" r="3" fill="#3B82F6"/>
+                            <circle cx="60" cy="120" r="3" fill="#3B82F6"/>
+                            
+                            <circle cx="100" cy="80" r="3" fill="#3B82F6"/>
+                            <circle cx="100" cy="100" r="3" fill="#3B82F6"/>
+                            <circle cx="100" cy="120" r="3" fill="#3B82F6"/>
+                            
+                            <circle cx="140" cy="80" r="3" fill="#3B82F6"/>
+                            <circle cx="140" cy="100" r="3" fill="#3B82F6"/>
+                            <circle cx="140" cy="120" r="3" fill="#3B82F6"/>
+                            
+                            <!-- 粒子轨迹 -->
+                            <line x1="20" y1="100" x2="180" y2="100" stroke="#10B981" stroke-width="2"/>
+                            <circle cx="100" cy="100" r="5" fill="#10B981"/>
+                            
+                            <!-- 偏转轨迹 -->
+                            <path d="M 20,80 Q 100,70 180,50" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="3,2" fill="none"/>
+                            <path d="M 20,120 Q 100,130 180,150" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="3,2" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-semibold text-gray-800">速度选择器</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">探索带电粒子在交叉电磁场中的运动，了解速度选择器的工作原理和应用。</p>
+                        <a href="../simulations/electromagnetism/velocity-selector.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                            <i class="fas fa-play mr-2"></i>开始实验
+                        </a>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
