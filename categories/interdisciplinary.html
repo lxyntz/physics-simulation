@@ -194,7 +194,7 @@
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">数据分析与误差处理</h3>
+                            <h3 class="text-xl font-semibold text-gray-800">数据分析与误差处理 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
                             <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
                         </div>
                         <p class="text-gray-600 mb-4">学习实验数据处理方法，掌握误差分析、线性回归和图表可视化技巧。</p>
@@ -204,180 +204,179 @@
                     </div>
                 </div>
 
-                <!-- 物理仪器基础操作 -->
+                <!-- 游标卡尺 -->
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="instrument" data-difficulty="basic">
                     <div class="h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 示波器 -->
-                            <rect x="50" y="60" width="100" height="70" rx="3" fill="#84E1BC" opacity="0.6"/>
-                            <rect x="60" y="70" width="80" height="40" fill="#111827" opacity="0.8"/>
-                            <!-- 示波器信号 -->
-                            <path d="M 65,90 L 75,90 Q 80,90 80,95 L 80,105 Q 80,110 85,110 L 95,110 Q 100,110 100,105 L 100,95 Q 100,90 105,90 L 115,90 Q 120,90 120,95 L 120,105 Q 120,110 125,110 L 135,110" fill="none" stroke="#2CA58D" stroke-width="2"/>
-                            <!-- 旋钮 -->
-                            <circle cx="70" cy="125" r="5" fill="#6B7280"/>
-                            <circle cx="90" cy="125" r="5" fill="#6B7280"/>
-                            <circle cx="110" cy="125" r="5" fill="#6B7280"/>
-                            <circle cx="130" cy="125" r="5" fill="#6B7280"/>
-                            <!-- 连接线 -->
-                            <line x1="30" y1="100" x2="50" y2="100" stroke="#6B7280" stroke-width="2"/>
-                            <circle cx="30" cy="100" r="5" fill="#F97316"/>
-                            <!-- 万用表 -->
-                            <rect x="150" y="80" width="30" height="50" rx="2" fill="#6B7280"/>
-                            <rect x="155" y="85" width="20" height="15" fill="#E5E7EB"/>
-                            <circle cx="165" cy="115" r="8" fill="#111827"/>
-                            <line x1="161" y1="111" x2="169" y2="119" stroke="#F97316" stroke-width="1"/>
+                            <!-- 卡尺主体 -->
+                            <rect x="30" y="90" width="140" height="20" fill="#E5E7EB"/>
+                            <!-- 主尺刻度 -->
+                            <line x1="30" y1="90" x2="30" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="40" y1="90" x2="40" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="50" y1="90" x2="50" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="60" y1="90" x2="60" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="70" y1="90" x2="70" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="80" y1="90" x2="80" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="90" y1="90" x2="90" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <line x1="100" y1="90" x2="100" y2="85" stroke="#6B7280" stroke-width="1.5"/>
+                            <!-- 游标 -->
+                            <rect x="80" y="90" width="40" height="10" fill="#9CA3AF"/>
+                            <!-- 游标刻度 -->
+                            <line x1="85" y1="100" x2="85" y2="105" stroke="#111827" stroke-width="1"/>
+                            <line x1="90" y1="100" x2="90" y2="105" stroke="#111827" stroke-width="1"/>
+                            <line x1="95" y1="100" x2="95" y2="105" stroke="#111827" stroke-width="1"/>
+                            <line x1="100" y1="100" x2="100" y2="105" stroke="#111827" stroke-width="1"/>
+                            <line x1="105" y1="100" x2="105" y2="105" stroke="#111827" stroke-width="1"/>
+                            <line x1="110" y1="100" x2="110" y2="105" stroke="#111827" stroke-width="1"/>
+                            <!-- 待测物品 -->
+                            <circle cx="65" cy="125" r="10" fill="#3B82F6" opacity="0.6"/>
+                            <!-- 卡尺爪 -->
+                            <path d="M 30,90 L 30,130 L 40,130" stroke="#6B7280" stroke-width="2" fill="none"/>
+                            <path d="M 90,100 L 90,130 L 80,130" stroke="#6B7280" stroke-width="2" fill="none"/>
+                            <!-- 读数指示 -->
+                            <line x1="85" y1="80" x2="85" y2="70" stroke="#F97316" stroke-width="1.5"/>
+                            <circle cx="85" cy="65" r="5" fill="#F97316"/>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">物理仪器基础操作</h3>
+                            <h3 class="text-xl font-semibold text-gray-800">游标卡尺 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
                             <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
                         </div>
-                        <p class="text-gray-600 mb-4">掌握常用物理仪器的操作方法，包括示波器、数字万用表、天平和游标卡尺等。</p>
+                        <p class="text-gray-600 mb-4">学习游标卡尺的工作原理、使用方法以及读数技巧，实践精确测量物体尺寸。</p>
                         <a href="#" class="inline-block bg-gray-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 计算物理基础 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="computation" data-difficulty="intermediate">
+                <!-- 螺旋测微器 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="instrument" data-difficulty="intermediate">
                     <div class="h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 计算机 -->
-                            <rect x="40" y="60" width="80" height="60" fill="#6B7280"/>
-                            <rect x="45" y="65" width="70" height="45" fill="#111827"/>
-                            <rect x="40" y="120" width="80" height="5" fill="#6B7280"/>
-                            <rect x="70" y="125" width="20" height="15" fill="#6B7280"/>
-                            <!-- 代码符号 -->
-                            <text x="50" y="80" font-size="8" fill="#2CA58D">for i in range(n):</text>
-                            <text x="55" y="90" font-size="8" fill="#F97316">  x[i] = f(x[i-1])</text>
-                            <text x="55" y="100" font-size="8" fill="#F97316">  plot(x, y)</text>
-                            <!-- 物理模拟 -->
-                            <circle cx="150" cy="80" r="20" fill="none" stroke="#3B82F6" stroke-width="1"/>
-                            <circle cx="150" cy="80" r="3" fill="#3B82F6"/>
-                            <path d="M 150,80 L 160,65" stroke="#3B82F6" stroke-width="1"/>
-                            <circle cx="160" cy="65" r="3" fill="#3B82F6"/>
-                            <!-- 轨迹 -->
-                            <path d="M 160,65 Q 170,75 150,100 Q 130,120 150,130" fill="none" stroke="#F97316" stroke-width="1" stroke-dasharray="2,1"/>
-                            <!-- 连接线 -->
-                            <line x1="120" y1="90" x2="130" y2="90" stroke="#2CA58D" stroke-width="1" stroke-dasharray="3,2"/>
+                            <!-- 测微器主体 -->
+                            <rect x="40" y="90" width="100" height="20" fill="#6B7280"/>
+                            <!-- 底座 -->
+                            <rect x="30" y="110" width="40" height="10" rx="2" fill="#6B7280"/>
+                            <!-- 刻度套筒 -->
+                            <rect x="70" y="85" width="30" height="30" rx="2" fill="#E5E7EB"/>
+                            <!-- 旋转鼓轮 -->
+                            <circle cx="120" cy="100" r="20" fill="#9CA3AF"/>
+                            <circle cx="120" cy="100" r="17" fill="#E5E7EB"/>
+                            <!-- 鼓轮刻度线 -->
+                            <line x1="120" y1="83" x2="120" y2="87" stroke="#111827" stroke-width="1"/>
+                            <line x1="137" y1="100" x2="133" y2="100" stroke="#111827" stroke-width="1"/>
+                            <line x1="120" y1="117" x2="120" y2="113" stroke="#111827" stroke-width="1"/>
+                            <line x1="103" y1="100" x2="107" y2="100" stroke="#111827" stroke-width="1"/>
+                            <!-- 倾斜刻度线，表示刻度 -->
+                            <line x1="130" y1="90" x2="127" y2="93" stroke="#111827" stroke-width="1"/>
+                            <line x1="130" y1="110" x2="127" y2="107" stroke="#111827" stroke-width="1"/>
+                            <line x1="110" y1="110" x2="113" y2="107" stroke="#111827" stroke-width="1"/>
+                            <line x1="110" y1="90" x2="113" y2="93" stroke="#111827" stroke-width="1"/>
+                            <!-- 待测物品 -->
+                            <rect x="40" y="95" width="20" height="10" fill="#3B82F6" opacity="0.6"/>
+                            <!-- 读数指示 -->
+                            <line x1="85" y1="75" x2="85" y2="65" stroke="#F97316" stroke-width="1.5"/>
+                            <circle cx="85" cy="60" r="5" fill="#F97316"/>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">计算物理基础</h3>
+                            <h3 class="text-xl font-semibold text-gray-800">螺旋测微器 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
                             <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">学习使用计算机模拟物理系统，掌握数值方法解决物理问题的基本技巧。</p>
+                        <p class="text-gray-600 mb-4">掌握螺旋测微器的工作原理和使用方法，进行高精度的厚度和直径测量实验。</p>
                         <a href="#" class="inline-block bg-gray-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 生物物理实验 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="biophysics" data-difficulty="intermediate">
+                <!-- 光电门测速 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="instrument" data-difficulty="intermediate">
                     <div class="h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 细胞结构 -->
-                            <circle cx="100" cy="100" r="30" fill="#84E1BC" opacity="0.3"/>
-                            <circle cx="100" cy="100" r="15" fill="#2CA58D" opacity="0.5"/>
-                            <!-- 细胞膜通道 -->
-                            <path d="M 70,100 Q 85,90 100,100 Q 115,110 130,100" fill="none" stroke="#6B7280" stroke-width="2"/>
-                            <!-- 离子流动 -->
-                            <circle cx="80" cy="95" r="3" fill="#3B82F6"/>
-                            <circle cx="95" cy="100" r="3" fill="#3B82F6"/>
-                            <circle cx="110" cy="105" r="3" fill="#3B82F6"/>
-                            <circle cx="120" cy="100" r="3" fill="#3B82F6"/>
-                            <!-- 电极 -->
-                            <line x1="40" y1="70" x2="40" y2="130" stroke="#6B7280" stroke-width="2"/>
-                            <line x1="160" y1="70" x2="160" y2="130" stroke="#6B7280" stroke-width="2"/>
-                            <!-- 电势图 -->
-                            <path d="M 40,150 L 60,150 L 70,130 L 90,170 L 110,130 L 130,170 L 140,150 L 160,150" fill="none" stroke="#F97316" stroke-width="2"/>
+                            <!-- 光电门支架 -->
+                            <rect x="40" y="60" width="5" height="80" fill="#6B7280"/>
+                            <rect x="140" y="60" width="5" height="80" fill="#6B7280"/>
+                            <!-- 光电门框架 -->
+                            <rect x="30" y="100" width="25" height="40" rx="2" fill="#9CA3AF"/>
+                            <rect x="130" y="100" width="25" height="40" rx="2" fill="#9CA3AF"/>
+                            <!-- 光束指示 -->
+                            <line x1="55" y1="120" x2="130" y2="120" stroke="#EF4444" stroke-width="1" stroke-dasharray="5,3"/>
+                            <!-- 移动物体 -->
+                            <rect x="80" y="110" width="20" height="20" fill="#3B82F6"/>
+                            <circle cx="85" cy="110" r="3" fill="#111827"/>
+                            <circle cx="95" cy="110" r="3" fill="#111827"/>
+                            <!-- 测速指示 -->
+                            <line x1="70" y1="140" x2="70" y2="180" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="110" y1="140" x2="110" y2="180" stroke="#6B7280" stroke-width="1"/>
+                            <line x1="70" y1="180" x2="110" y2="180" stroke="#6B7280" stroke-width="1"/>
+                            <text x="85" y="175" font-size="8" text-anchor="middle" fill="#111827">Δt</text>
+                            <!-- 数显装置 -->
+                            <rect x="60" y="50" width="60" height="25" rx="3" fill="#111827"/>
+                            <rect x="65" y="55" width="50" height="15" rx="1" fill="#10B981"/>
+                            <text x="90" y="67" font-size="10" text-anchor="middle" fill="#111827">0.125 s</text>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">生物物理实验</h3>
+                            <h3 class="text-xl font-semibold text-gray-800">光电门测速 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
                             <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">探索物理原理在生物系统中的应用，研究细胞膜电位、神经信号传导等生物物理现象。</p>
+                        <p class="text-gray-600 mb-4">利用光电门装置测量物体的速度，研究匀速运动、加速度和自由落体运动规律。</p>
                         <a href="#" class="inline-block bg-gray-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 地球物理探测 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="geophysics" data-difficulty="advanced">
+                <!-- 打点计时器测速 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="instrument" data-difficulty="basic">
                     <div class="h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 地球剖面 -->
-                            <path d="M 30,150 Q 100,120 170,150" fill="#84E1BC" opacity="0.5"/>
-                            <path d="M 30,150 Q 100,170 170,150" fill="#2CA58D" opacity="0.7"/>
-                            <!-- 地层结构 -->
-                            <path d="M 50,150 Q 60,140 70,150" fill="none" stroke="#6B7280" stroke-width="1"/>
-                            <path d="M 90,150 Q 100,135 110,150" fill="none" stroke="#6B7280" stroke-width="1"/>
-                            <path d="M 130,150 Q 140,140 150,150" fill="none" stroke="#6B7280" stroke-width="1"/>
-                            <!-- 探测器 -->
-                            <rect x="70" y="120" width="10" height="5" fill="#111827"/>
-                            <rect x="120" y="120" width="10" height="5" fill="#111827"/>
-                            <!-- 波形 -->
-                            <path d="M 40,100 L 50,100 Q 55,100 55,95 L 55,90 Q 55,85 60,85 L 65,85 Q 70,85 70,90 L 70,95 Q 70,100 75,100 L 160,100" fill="none" stroke="#F97316" stroke-width="1"/>
-                            <path d="M 70,80 L 85,80 Q 90,80 90,75 L 90,70 Q 90,65 95,65 L 100,65 Q 105,65 105,70 L 105,75 Q 105,80 110,80 L 125,80" fill="none" stroke="#F97316" stroke-width="1"/>
-                            <!-- 数据图 -->
-                            <rect x="140" y="60" width="40" height="30" fill="#E5E7EB" opacity="0.7"/>
-                            <polyline points="145,85 150,75 155,80 160,70 165,75 170,65 175,70" fill="none" stroke="#3B82F6" stroke-width="1"/>
+                            <!-- 打点计时器 -->
+                            <rect x="40" y="60" width="40" height="30" rx="3" fill="#6B7280"/>
+                            <!-- 纸带 -->
+                            <path d="M 80,75 L 170,75" stroke="#E5E7EB" stroke-width="10"/>
+                            <!-- 打点 -->
+                            <circle cx="90" cy="75" r="2" fill="#111827"/>
+                            <circle cx="100" cy="75" r="2" fill="#111827"/>
+                            <circle cx="112" cy="75" r="2" fill="#111827"/>
+                            <circle cx="126" cy="75" r="2" fill="#111827"/>
+                            <circle cx="142" cy="75" r="2" fill="#111827"/>
+                            <circle cx="160" cy="75" r="2" fill="#111827"/>
+                            <!-- 测量过程 -->
+                            <line x1="90" y1="90" x2="90" y2="100" stroke="#F97316" stroke-width="1"/>
+                            <line x1="100" y1="90" x2="100" y2="100" stroke="#F97316" stroke-width="1"/>
+                            <line x1="90" y1="95" x2="100" y2="95" stroke="#F97316" stroke-width="1"/>
+                            <text x="95" y="105" font-size="6" text-anchor="middle" fill="#111827">Δx₁</text>
+                            
+                            <line x1="112" y1="90" x2="112" y2="100" stroke="#10B981" stroke-width="1"/>
+                            <line x1="126" y1="90" x2="126" y2="100" stroke="#10B981" stroke-width="1"/>
+                            <line x1="112" y1="95" x2="126" y2="95" stroke="#10B981" stroke-width="1"/>
+                            <text x="120" y="105" font-size="6" text-anchor="middle" fill="#111827">Δx₂</text>
+                            
+                            <line x1="142" y1="90" x2="142" y2="100" stroke="#3B82F6" stroke-width="1"/>
+                            <line x1="160" y1="90" x2="160" y2="100" stroke="#3B82F6" stroke-width="1"/>
+                            <line x1="142" y1="95" x2="160" y2="95" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="150" y="105" font-size="6" text-anchor="middle" fill="#111827">Δx₃</text>
+                            
+                            <!-- 示意图 -->
+                            <rect x="60" y="120" width="80" height="30" rx="2" fill="#E5E7EB" opacity="0.6"/>
+                            <path d="M 70,135 L 130,135" stroke="#6B7280" stroke-width="1"/>
+                            <path d="M 70,135 L 90,125" stroke="#F97316" stroke-width="1.5"/>
+                            <path d="M 90,125 L 110,120" stroke="#10B981" stroke-width="1.5"/>
+                            <path d="M 110,120 L 130,125" stroke="#3B82F6" stroke-width="1.5"/>
+                            <text x="100" y="145" font-size="6" text-anchor="middle" fill="#111827">速度-时间图</text>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">地球物理探测</h3>
-                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                            <h3 class="text-xl font-semibold text-gray-800">打点计时器测速 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
+                            <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
                         </div>
-                        <p class="text-gray-600 mb-4">学习地震波探测、重力测量等地球物理探测方法，分析地球内部结构。</p>
-                        <a href="#" class="inline-block bg-gray-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
-                            <i class="fas fa-play mr-2"></i>开始实验
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 实验设计与科学方法 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="experiment" data-difficulty="advanced">
-                    <div class="h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 实验设计图 -->
-                            <rect x="40" y="50" width="120" height="80" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
-                            <!-- 实验仪器 -->
-                            <rect x="50" y="70" width="30" height="40" fill="#2CA58D" opacity="0.5"/>
-                            <circle cx="65" cy="80" r="5" fill="#111827"/>
-                            <rect x="90" y="60" width="20" height="60" fill="#84E1BC" opacity="0.5"/>
-                            <rect x="120" y="80" width="30" height="30" fill="#3B82F6" opacity="0.3"/>
-                            <!-- 连接线 -->
-                            <line x1="80" y1="90" x2="90" y2="90" stroke="#6B7280" stroke-width="1"/>
-                            <line x1="110" y1="90" x2="120" y2="90" stroke="#6B7280" stroke-width="1"/>
-                            <!-- 图表 -->
-                            <rect x="50" y="130" width="100" height="30" fill="#E5E7EB" opacity="0.5"/>
-                            <line x1="60" y1="150" x2="140" y2="150" stroke="#6B7280" stroke-width="1"/>
-                            <line x1="60" y1="150" x2="60" y2="135" stroke="#6B7280" stroke-width="1"/>
-                            <!-- 数据点 -->
-                            <circle cx="70" cy="145" r="2" fill="#F97316"/>
-                            <circle cx="85" cy="140" r="2" fill="#F97316"/>
-                            <circle cx="100" cy="143" r="2" fill="#F97316"/>
-                            <circle cx="115" cy="138" r="2" fill="#F97316"/>
-                            <circle cx="130" cy="142" r="2" fill="#F97316"/>
-                            <!-- 科学方法循环 -->
-                            <path d="M 170,70 A 20,20 0 1 1 150,90" fill="none" stroke="#F97316" stroke-width="1"/>
-                            <polygon points="150,90 145,85 155,85" fill="#F97316"/>
-                        </svg>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">实验设计与科学方法</h3>
-                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">学习科学研究的方法论，掌握实验设计、变量控制、假设检验等科学研究技能。</p>
+                        <p class="text-gray-600 mb-4">使用打点计时器记录物体运动轨迹，分析纸带上的点距变化来研究物体的速度和加速度。</p>
                         <a href="#" class="inline-block bg-gray-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-gray-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>

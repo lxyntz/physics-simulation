@@ -248,7 +248,6 @@
                             
                             <!-- 标记 -->
                             <circle cx="60" cy="100" r="3" fill="#EF4444"/>
-                            <circle cx="120" cy="100" r="3" fill="#EF4444"/>
                         </svg>
                     </div>
                     <div class="p-6">
@@ -256,7 +255,7 @@
                             <h3 class="text-xl font-semibold text-gray-800">波的叠加</h3>
                             <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">探索波的叠加原理，研究不同频率、振幅波形的叠加效果。</p>
+                        <p class="text-gray-600 mb-4">研究波的叠加原理，观察相同频率和不同频率波叠加后的形态变化。</p>
                         <a href="../simulations/waves/wave-sum.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
@@ -267,25 +266,33 @@
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="sound" data-difficulty="intermediate">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 发声体 -->
-                            <circle cx="70" cy="100" r="15" fill="#F59E0B"/>
-                            <path d="M 85,100 Q 95,90 105,100 Q 95,110 85,100" stroke="#F59E0B" stroke-width="1" fill="#F59E0B" opacity="0.6"/>
-                            <!-- 运动方向 -->
-                            <line x1="40" y1="100" x2="60" y2="100" stroke="#F59E0B" stroke-width="2"/>
-                            <polygon points="40,100 45,95 45,105" fill="#F59E0B"/>
+                            <!-- 背景道路 -->
+                            <rect x="20" y="120" width="160" height="30" fill="#64748B" opacity="0.3"/>
+                            <line x1="20" y1="135" x2="180" y2="135" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5,5"/>
                             
-                            <!-- 声波 -->
-                            <circle cx="70" cy="100" r="25" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,1"/>
-                            <ellipse cx="70" cy="100" rx="35" ry="32" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,1"/>
-                            <ellipse cx="70" cy="100" rx="45" ry="40" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,1"/>
-                            <ellipse cx="70" cy="100" rx="55" ry="48" fill="none" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,1"/>
+                            <!-- 波源（警车） -->
+                            <rect x="80" y="125" width="20" height="10" fill="#EF4444"/>
+                            <rect x="78" y="120" width="24" height="5" fill="#3B82F6"/>
+                            <circle cx="85" cy="140" r="5" fill="#000000" opacity="0.7"/>
+                            <circle cx="95" cy="140" r="5" fill="#000000" opacity="0.7"/>
                             
                             <!-- 观察者 -->
-                            <circle cx="140" cy="100" r="8" fill="#10B981"/>
-                            <path d="M 140,108 L 140,120 L 135,130" stroke="#10B981" stroke-width="2" fill="none"/>
-                            <path d="M 140,108 L 140,120 L 145,130" stroke="#10B981" stroke-width="2" fill="none"/>
-                            <circle cx="135" cy="92" r="3" fill="#10B981"/>
-                            <circle cx="145" cy="92" r="3" fill="#10B981"/>
+                            <circle cx="40" cy="110" r="7" fill="#10B981"/>
+                            <rect x="37" y="117" width="6" height="15" fill="#10B981"/>
+                            
+                            <!-- 波前传播 - 左侧压缩 -->
+                            <circle cx="80" cy="130" r="10" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.8"/>
+                            <circle cx="80" cy="130" r="20" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.7"/>
+                            <circle cx="80" cy="130" r="30" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.6"/>
+                            
+                            <!-- 波前传播 - 右侧拉伸 -->
+                            <circle cx="100" cy="130" r="15" fill="none" stroke="#EF4444" stroke-width="1" opacity="0.8"/>
+                            <circle cx="100" cy="130" r="35" fill="none" stroke="#EF4444" stroke-width="1" opacity="0.7"/>
+                            <circle cx="100" cy="130" r="60" fill="none" stroke="#EF4444" stroke-width="1" opacity="0.6"/>
+                            
+                            <!-- 移动方向 -->
+                            <line x1="105" y1="130" x2="125" y2="130" stroke="#000000" stroke-width="1"/>
+                            <polygon points="125,130 120,127 120,133" fill="#000000"/>
                         </svg>
                     </div>
                     <div class="p-6">
@@ -293,7 +300,7 @@
                             <h3 class="text-xl font-semibold text-gray-800">多普勒效应</h3>
                             <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">模拟声源和观察者相对运动时的频率变化，体验多普勒效应现象。</p>
+                        <p class="text-gray-600 mb-4">研究波源或观察者运动时波的频率变化，模拟声波的多普勒效应现象。</p>
                         <a href="../simulations/waves/doppler.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
@@ -324,48 +331,47 @@
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">单摆实验</h3>
+                            <h3 class="text-xl font-semibold text-gray-800">单摆实验<span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
                             <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">基础</span>
                         </div>
                         <p class="text-gray-600 mb-4">探索单摆周期与摆长、摆角的关系，验证单摆运动规律。</p>
-                        <a href="../simulations/waves/harmonic.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
                     </div>
                 </div>
 
-                <!-- 声波与乐器 -->
-                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="sound" data-difficulty="advanced">
+                <!-- 简谐运动辅助圆 -->
+                <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="oscillation" data-difficulty="intermediate">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 琴弦 -->
-                            <line x1="40" y1="80" x2="160" y2="80" stroke="#6B7280" stroke-width="2"/>
-                            <path d="M 40,80 Q 100,60 160,80" stroke="#6B7280" stroke-width="1" fill="none" stroke-dasharray="3,1"/>
+                            <!-- 辅助圆 -->
+                            <circle cx="100" cy="100" r="40" fill="none" stroke="#6B7280" stroke-width="1.5" stroke-dasharray="3,2"/>
                             
-                            <!-- 音叉 -->
-                            <path d="M 60,120 L 70,120 L 70,140 L 60,140 Z" stroke="#6B7280" stroke-width="1" fill="#E5E7EB"/>
-                            <path d="M 65,120 L 65,105" stroke="#6B7280" stroke-width="2"/>
-                            <path d="M 55,105 L 75,105" stroke="#6B7280" stroke-width="2"/>
-                            <path d="M 58,105 L 58,90" stroke="#6B7280" stroke-width="2"/>
-                            <path d="M 72,105 L 72,90" stroke="#6B7280" stroke-width="2"/>
+                            <!-- 旋转半径 -->
+                            <line x1="100" y1="100" x2="140" y2="100" stroke="#F59E0B" stroke-width="2"/>
+                            <circle cx="140" cy="100" r="5" fill="#F59E0B"/>
                             
-                            <!-- 波形 -->
-                            <path d="M 90,100 Q 100,90 110,100 Q 120,110 130,100 Q 140,90 150,100" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
-                            <path d="M 90,130 Q 100,120 110,130 Q 120,140 130,130 Q 140,120 150,130" stroke="#3B82F6" stroke-width="1.5" fill="none"/>
+                            <!-- 简谐运动投影 -->
+                            <line x1="140" y1="100" x2="140" y2="150" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,2"/>
+                            <circle cx="140" cy="150" r="5" fill="#3B82F6"/>
                             
-                            <!-- 频谱 -->
-                            <rect x="110" y="150" width="8" height="30" fill="#F59E0B"/>
-                            <rect x="125" y="150" width="8" height="20" fill="#F59E0B" opacity="0.7"/>
-                            <rect x="140" y="150" width="8" height="10" fill="#F59E0B" opacity="0.4"/>
+                            <!-- 简谐运动轨迹 -->
+                            <line x1="40" y1="150" x2="160" y2="150" stroke="#6B7280" stroke-width="1"/>
+                            <path d="M 40,150 Q 60,125 80,150 Q 100,175 120,150 Q 140,125 160,150" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                            
+                            <!-- 角速度标记 -->
+                            <path d="M 100,100 Q 110,90 120,100" stroke="#EF4444" stroke-width="1.5" fill="none"/>
+                            <text x="112" y="90" font-size="10" fill="#EF4444">ω</text>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">声波与乐器</h3>
-                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                            <h3 class="text-xl font-semibold text-gray-800">简谐运动辅助圆</h3>
+                            <span class="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded">中级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">研究不同乐器的发声原理，分析声波的频率、音色和泛音特性。</p>
-                        <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
+                        <p class="text-gray-600 mb-4">通过辅助圆可视化简谐运动，展示圆周运动与简谐运动的关系。</p>
+                        <a href="../simulations/waves/harmonic.html" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>
                     </div>
@@ -375,32 +381,35 @@
                 <div class="card bg-white rounded-xl shadow-md overflow-hidden" data-category="resonance" data-difficulty="advanced">
                     <div class="h-48 overflow-hidden bg-indigo-50 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full p-4">
-                            <!-- 桥梁结构 -->
-                            <path d="M 30,120 L 50,100 L 70,120 L 90,100 L 110,120 L 130,100 L 150,120 L 170,100" stroke="#6B7280" stroke-width="3" fill="none"/>
-                            <line x1="30" y1="120" x2="170" y2="120" stroke="#6B7280" stroke-width="2"/>
-                            <rect x="20" y="120" width="20" height="30" fill="#6B7280"/>
-                            <rect x="160" y="120" width="20" height="30" fill="#6B7280"/>
+                            <!-- 底部支撑 -->
+                            <rect x="30" y="150" width="140" height="10" rx="2" fill="#64748B"/>
                             
-                            <!-- 振动波形 -->
-                            <path d="M 30,120 Q 50,90 70,120 Q 90,90 110,120 Q 130,90 150,120 Q 170,90 190,120" stroke="#EF4444" stroke-width="1.5" fill="none" opacity="0.7"/>
+                            <!-- 悬挂系统 -->
+                            <line x1="50" y1="60" x2="50" y2="150" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="100" y1="60" x2="100" y2="150" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
+                            <line x1="150" y1="60" x2="150" y2="150" stroke="#6B7280" stroke-width="1" stroke-dasharray="3,2"/>
                             
-                            <!-- 振动源 -->
-                            <rect x="85" y="60" width="30" height="10" rx="2" fill="#F59E0B"/>
-                            <path d="M 100,70 L 100,90" stroke="#F59E0B" stroke-width="2"/>
-                            <circle cx="100" cy="95" r="5" fill="#F59E0B"/>
+                            <!-- 质量-弹簧系统 -->
+                            <path d="M 50,60 L 50,70 L 45,75 L 55,80 L 45,85 L 55,90 L 45,95 L 55,100 L 50,105" stroke="#6B7280" stroke-width="1.5" fill="none"/>
+                            <rect x="45" y="105" width="10" height="15" fill="#3B82F6"/>
                             
-                            <!-- 波动指示 -->
-                            <path d="M 60,40 Q 80,35 100,40 Q 120,45 140,40" stroke="#3B82F6" stroke-width="1.5" fill="none" stroke-dasharray="3,1"/>
-                            <path d="M 60,50 Q 80,45 100,50 Q 120,55 140,50" stroke="#3B82F6" stroke-width="1.5" fill="none" stroke-dasharray="3,1"/>
-                            <path d="M 60,60 Q 80,55 100,60 Q 120,65 140,60" stroke="#3B82F6" stroke-width="1.5" fill="none" stroke-dasharray="3,1"/>
+                            <path d="M 100,60 L 100,65 L 95,70 L 105,75 L 95,80 L 105,85 L 95,90 L 105,95 L 95,100 L 105,105 L 95,110 L 105,115 L 100,120" stroke="#6B7280" stroke-width="1.5" fill="none"/>
+                            <rect x="95" y="120" width="10" height="15" fill="#EF4444"/>
+                            
+                            <path d="M 150,60 L 150,65 L 145,70 L 155,75 L 145,80 L 155,85 L 145,90 L 155,95 L 145,100 L 155,105 L 145,110 L 155,115 L 145,120 L 155,125 L 150,130" stroke="#6B7280" stroke-width="1.5" fill="none"/>
+                            <rect x="145" y="130" width="10" height="15" fill="#10B981"/>
+                            
+                            <!-- 共振指示 -->
+                            <path d="M 100,140 Q 110,130 120,140" stroke="#EF4444" stroke-width="1.5" fill="none"/>
+                            <path d="M 100,140 Q 90,150 80,140" stroke="#EF4444" stroke-width="1.5" fill="none"/>
                         </svg>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-semibold text-gray-800">共振现象</h3>
-                            <span class="text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">高级</span>
+                            <h3 class="text-xl font-semibold text-gray-800">共振现象 <span class="text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded ml-2">未开发</span></h3>
+                            <span class="text-xs font-medium bg-purple-100 text-purple-800 px-2 py-1 rounded">高级</span>
                         </div>
-                        <p class="text-gray-600 mb-4">探索共振现象及其应用，了解共振灾害与共振在工程中的利用。</p>
+                        <p class="text-gray-600 mb-4">研究外力频率接近系统固有频率时的共振现象，探索振幅随频率变化的规律。</p>
                         <a href="#" class="inline-block bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition btn">
                             <i class="fas fa-play mr-2"></i>开始实验
                         </a>

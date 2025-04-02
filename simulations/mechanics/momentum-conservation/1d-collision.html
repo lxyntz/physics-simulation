@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一维碰撞模拟 - 物理可视化教学</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- p5.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
+    <!-- 自定义样式 -->
+    <style>
+        /* 自定义颜色变量 */
+        :root {
+            --primary: #5E6AD2;
+            --primary-light: #8D91E2;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #111827;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --light-gray: #E5E7EB;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .btn {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.3);
+            border-color: var(--primary);
+        }
+        
+        /* 滑块样式优化 */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5E6AD2;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #4F46E5;
+        }
+        
+        /* 模拟容器样式 */
+        #simulation-container {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        /* 确保canvas容器有正确的尺寸 */
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* 确保canvas元素完全填充父容器 */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 标签样式 */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-info {
+            background-color: #E0E7FF;
+            color: #4F46E5;
+        }
+        
+        .badge-success {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+        
+        .badge-warning {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="../momentum-conservation.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrow-left mr-2 text-indigo-600"></i>
+                        返回动量守恒页面
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-arrows-alt-h mr-2 text-indigo-600"></i>
+                        一维碰撞模拟
+                    </span>
+                </div>
+                <div class="flex items-center">
+                    <a href="../../../index.html" class="flex items-center text-xl font-semibold text-gray-800">
+                        <i class="fas fa-home mr-2 text-indigo-600"></i>
+                        首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 主内容区域 -->
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- 左侧控制面板 -->
+            <div class="md:w-1/3 bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">参数设置</h2>
+                
+                <!-- 碰撞类型 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-3">碰撞类型</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input type="radio" id="elastic" name="collision-type" value="elastic" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                            <label for="elastic" class="ml-2 block text-sm text-gray-700 flex items-center">
+                                弹性碰撞
+                                <span class="badge badge-info ml-2">e=1</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="inelastic" name="collision-type" value="inelastic" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                            <label for="inelastic" class="ml-2 block text-sm text-gray-700 flex items-center">
+                                非弹性碰撞
+                                <span class="badge badge-warning ml-2">0&lt;e&lt;1</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="perfectly-inelastic" name="collision-type" value="perfectly-inelastic" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                            <label for="perfectly-inelastic" class="ml-2 block text-sm text-gray-700 flex items-center">
+                                完全非弹性碰撞
+                                <span class="badge badge-success ml-2">e=0</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 恢复系数设置 (仅非弹性碰撞) -->
+                <div id="coefficient-container" class="mb-6 hidden">
+                    <label for="coefficient" class="block text-sm font-medium text-gray-700 mb-1">恢复系数 (e)</label>
+                    <div class="flex items-center">
+                        <input type="range" id="coefficient" min="0.1" max="0.9" step="0.1" value="0.5" class="w-full">
+                        <span id="coefficient-value" class="ml-2 min-w-[40px] text-sm text-gray-600">0.5</span>
+                    </div>
+                </div>
+                
+                <hr class="my-6 border-gray-200">
+                
+                <!-- 左侧小球参数 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-3">左侧小球（蓝色）</h3>
+                    
+                    <div class="mb-4">
+                        <label for="left-mass" class="block text-sm font-medium text-gray-700 mb-1">质量 (kg)</label>
+                        <div class="flex items-center">
+                            <input type="range" id="left-mass" min="1" max="10" step="1" value="1" class="w-full">
+                            <span id="left-mass-value" class="ml-2 min-w-[40px] text-sm text-gray-600">1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="left-velocity" class="block text-sm font-medium text-gray-700 mb-1">初速度 (m/s)</label>
+                        <div class="flex items-center">
+                            <input type="range" id="left-velocity" min="0" max="10" step="0.5" value="5" class="w-full">
+                            <span id="left-velocity-value" class="ml-2 min-w-[40px] text-sm text-gray-600">5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧小球参数 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-3">右侧小球（红色）</h3>
+                    
+                    <div class="mb-4">
+                        <label for="right-mass" class="block text-sm font-medium text-gray-700 mb-1">质量 (kg)</label>
+                        <div class="flex items-center">
+                            <input type="range" id="right-mass" min="1" max="10" step="1" value="1" class="w-full">
+                            <span id="right-mass-value" class="ml-2 min-w-[40px] text-sm text-gray-600">1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="right-velocity" class="block text-sm font-medium text-gray-700 mb-1">初速度 (m/s)</label>
+                        <div class="flex items-center">
+                            <input type="range" id="right-velocity" min="-10" max="0" step="0.5" value="-5" class="w-full">
+                            <span id="right-velocity-value" class="ml-2 min-w-[40px] text-sm text-gray-600">-5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模拟画布和数据展示 -->
+            <div class="md:w-2/3">
+                <!-- 模拟画布 -->
+                <div id="simulation-container" class="bg-white rounded-xl shadow-md overflow-hidden mb-6 h-80">
+                    <div id="canvas-container"></div>
+                </div>
+                
+                <!-- 控制按钮 - 从左侧移到这里 -->
+                <div class="flex space-x-4 mb-6">
+                    <button id="start-btn" class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition">
+                        <i class="fas fa-play mr-2"></i>开始模拟
+                    </button>
+                    <button id="reset-btn" class="flex-1 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition">
+                        <i class="fas fa-redo mr-2"></i>重置
+                    </button>
+                </div>
+                
+                <!-- 数据展示 -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">物理数据</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- 动量数据 -->
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-indigo-700 mb-2">动量</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">碰撞前总动量:</span>
+                                    <span id="initial-momentum" class="text-sm font-medium text-gray-800">0 kg·m/s</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">碰撞后总动量:</span>
+                                    <span id="final-momentum" class="text-sm font-medium text-gray-800">0 kg·m/s</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">动量守恒:</span>
+                                    <span id="momentum-conservation" class="text-sm font-medium text-green-600">是</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 能量数据 -->
+                        <div class="bg-amber-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-amber-700 mb-2">动能</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">碰撞前总动能:</span>
+                                    <span id="initial-energy" class="text-sm font-medium text-gray-800">0 J</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">碰撞后总动能:</span>
+                                    <span id="final-energy" class="text-sm font-medium text-gray-800">0 J</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600">能量守恒:</span>
+                                    <span id="energy-conservation" class="text-sm font-medium" data-conserved="true">是</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 理论说明 -->
+        <div class="bg-white rounded-xl shadow-md p-8 mt-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">一维碰撞理论</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">理论公式</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-indigo-700 mb-2">动量守恒方程</h4>
+                            <div class="font-mono text-sm bg-white p-2 rounded">
+                                m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2">
+                                其中，m₁、m₂为两个小球的质量，v₁、v₂为碰撞前速度，v₁'、v₂'为碰撞后速度。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-amber-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-amber-700 mb-2">恢复系数方程</h4>
+                            <div class="font-mono text-sm bg-white p-2 rounded">
+                                e = -(v₂' - v₁')/(v₂ - v₁)
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2">
+                                恢复系数e表示碰撞的弹性程度，e=1为完全弹性碰撞，e=0为完全非弹性碰撞，0&lt;e&lt;1为非弹性碰撞。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">碰撞类型</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-green-700 mb-2">弹性碰撞 (e=1)</h4>
+                            <p class="text-sm text-gray-600">
+                                在弹性碰撞中，动量和机械能都守恒。碰撞后，两个物体分开，没有能量损失。碰撞后的速度可以用以下公式计算：
+                            </p>
+                            <div class="font-mono text-sm bg-white p-2 rounded mt-2">
+                                v₁' = [(m₁-m₂)/(m₁+m₂)]v₁ + [2m₂/(m₁+m₂)]v₂
+                            </div>
+                            <div class="font-mono text-sm bg-white p-2 rounded mt-1">
+                                v₂' = [2m₁/(m₁+m₂)]v₁ + [(m₂-m₁)/(m₁+m₂)]v₂
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-yellow-700 mb-2">非弹性碰撞 (0&lt;e&lt;1)</h4>
+                            <p class="text-sm text-gray-600">
+                                在非弹性碰撞中，动量守恒但机械能不守恒，部分动能转化为其他形式的能量（如热能）。碰撞后物体分开，但相对速度减小。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-red-700 mb-2">完全非弹性碰撞 (e=0)</h4>
+                            <p class="text-sm text-gray-600">
+                                在完全非弹性碰撞中，动量守恒但机械能损失最大。碰撞后，两个物体粘在一起以相同的速度运动：
+                            </p>
+                            <div class="font-mono text-sm bg-white p-2 rounded mt-2">
+                                v₁' = v₂' = (m₁v₁ + m₂v₂)/(m₁ + m₂)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2025 物理可视化教学平台. 保留所有权利.</p>
+                <p class="text-sm text-gray-500 mt-2 sm:mt-0">作者：<span class="text-indigo-600 font-medium">Lisa</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="1d-collision.js"></script>
+</body>
+</html> 
