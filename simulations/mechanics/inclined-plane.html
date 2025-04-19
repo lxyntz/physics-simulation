@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>斜面运动物理模拟实验</title>
+    <link href="https://fastly.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://fastly.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
+    <script src="https://fastly.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #1e40af;
+            --accent: #f97316;
+            --light-bg: #f8fafc;
+            --dark-text: #1f2937;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+        }
+        
+        .formula {
+            font-family: 'Times New Roman', Times, serif;
+        }
+        
+        .simulation-container {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .simulation-container:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .control-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        /* 加载动画 */
+        .loading-animation {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <!-- 标题栏 -->
+        <header id="f4c0afd1-9a69-4f38-9c6e-73ec3d9d2f2e" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <h1 id="fd1ea6d3-4fbe-4c01-b076-7ca7af40e35a" class="text-2xl md:text-3xl font-bold tracking-tight">
+                        <i class="fas fa-flask mr-2"></i>斜面运动物理模拟实验
+                    </h1>
+                    <div id="b1c5285c-0f7d-4b8e-9d12-6c8964b91b9c" class="hidden md:flex items-center space-x-4">
+                        <button id="help-button" class="px-3 py-1 bg-blue-700 hover:bg-blue-900 rounded-md transition-colors">
+                            <i class="fas fa-question-circle mr-1"></i>帮助
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main id="bcc12677-fa13-4187-bd9e-fc2002cde969" class="flex-grow container mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 公式和原理解释 -->
+                <div id="c6327c1a-2b6f-44c3-8a43-345eccbe609e" class="lg:col-span-1 bg-white rounded-xl shadow-sm p-6">
+                    <h2 id="ab7288a9-b6ef-4b7a-893f-a80a9151f449" class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-book text-blue-600 mr-2"></i>物理原理
+                    </h2>
+                    <div id="ca147761-d0a6-4ccc-a313-a0d86f603929" class="space-y-4">
+                        <div id="d84a69f2-21a1-4932-a1fb-12c76cf55c7f" class="bg-blue-50 p-4 rounded-lg">
+                            <h3 id="e7bb8784-8002-489a-8792-78b615885784" class="font-bold text-blue-700 mb-2">基本力分析</h3>
+                            <p id="4cad1f86-4222-484d-9fc0-43a79c911a34">在斜面上，物体受到的力有：</p>
+                            <ul id="a7eefc5e-f0a6-4164-acf1-fbcc0b97f2c0" class="list-disc list-inside pl-2 mt-2 space-y-2 text-sm">
+                                <li id="c4205959-af4d-4ce7-8c30-e606e416f697">重力：<span class="formula">G = mg</span></li>
+                                <li id="4f68a84c-51ca-4c9a-b5ca-442c16490388">重力沿斜面方向分力：<span class="formula">F<sub>平行</sub> = mg·sinθ</span></li>
+                                <li id="f84fd9cc-72ec-47d4-a803-c63dc2452f3f">重力垂直于斜面方向分力：<span class="formula">F<sub>垂直</sub> = mg·cosθ</span></li>
+                                <li id="11f11a09-16e1-47d2-80c9-d5f8bbf25a1a">摩擦力：<span class="formula">f = μ·F<sub>垂直</sub> = μ·mg·cosθ</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div id="ec66f996-8a1f-42cb-be30-2e6c2dfb8540" class="bg-blue-50 p-4 rounded-lg">
+                            <h3 id="e6ca1f09-9655-4419-87c4-472806b054f1" class="font-bold text-blue-700 mb-2">运动方程</h3>
+                            <p id="b7f65ef4-7b72-4b2d-b691-1a04f542e9ce" class="formula mb-2">当 mg·sinθ > μ·mg·cosθ 时，物体沿斜面向下滑动：</p>
+                            <p id="05f212e1-39b4-4b0f-b4fa-adae60c1e2d4" class="formula pl-4">a = g·(sinθ - μ·cosθ)</p>
+                            <p id="7f0b5afa-48aa-4edc-9080-66d4a22d6ae2" class="formula mt-2 mb-2">当 mg·sinθ ≤ μ·mg·cosθ 时，物体静止：</p>
+                            <p id="8f224711-6c07-4f3c-9ac3-3f025f9a0200" class="formula pl-4">a = 0</p>
+                        </div>
+                        
+                        <div id="9fb16945-9ea4-4ce2-be1c-9af3a0169278" class="bg-orange-50 p-4 rounded-lg">
+                            <h3 id="ae21d623-fa35-41c7-a096-7d7212fcef1c" class="font-bold text-orange-700 mb-2">临界条件</h3>
+                            <p id="6ae10c9f-99cf-4665-9941-881713155a91" class="formula mb-2">物体恰好将要滑动的临界条件：</p>
+                            <p id="291a46a2-a9fc-4bf4-81d6-42fa60401cdc" class="formula pl-4">tanθ = μ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模拟区域 -->
+                <div id="ad2a5963-f1bb-4b48-8e15-c9e206af8890" class="lg:col-span-2 bg-white rounded-xl overflow-hidden shadow-sm">
+                    <div id="simulation-header" class="bg-gray-50 px-6 py-4 border-b">
+                        <h2 id="8eb91a96-3c4c-44df-9298-8d75fc8ba14e" class="text-xl font-semibold">
+                            <i class="fas fa-vial text-blue-600 mr-2"></i>斜面运动模拟
+                        </h2>
+                    </div>
+
+                    <!-- 模拟画布 -->
+                    <div id="ac21758d-9272-402e-84de-dd600893fbd1" class="p-6">
+                        <div id="simulation-container" class="simulation-container w-full bg-gray-50 rounded-lg overflow-hidden">
+                            <div id="sketch-holder" class="w-full h-64 md:h-80 relative">
+                                <!-- P5.js 将在这里渲染 -->
+                            </div>
+                        </div>
+
+                        <!-- 控制区域 -->
+                        <div id="e74afcab-b973-4fce-929d-2e5c6f5ecb0e" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- 控制滑块 -->
+                            <div id="a61134cf-0acd-47b5-8b05-5af25ef738fb" class="space-y-4">
+                                <div id="b75ee75e-740c-4032-ab90-dbe9b22094ff" class="mb-4">
+                                    <label id="573df86c-ac9e-4d24-8133-d0b66a1d4aad" class="block text-sm font-medium text-gray-700 mb-1">
+                                        斜面角度 (θ): <span id="angle-value">30</span>°
+                                    </label>
+                                    <input id="angle-slider" type="range" min="0" max="45" value="30" class="control-slider w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+
+                                <div id="a568e7a6-45f1-41d3-9068-32ac80b39392" class="mb-4">
+                                    <label id="bc38c7e4-01ed-43ec-9af1-b85278541bf1" class="block text-sm font-medium text-gray-700 mb-1">
+                                        摩擦系数 (μ): <span id="friction-value">0.2</span>
+                                    </label>
+                                    <input id="friction-slider" type="range" min="0" max="1" step="0.01" value="0.2" class="control-slider w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+
+                                <div id="d3addf59-2989-454c-be5a-7d7691acb4cf">
+                                    <label id="9c597605-f8f7-4be9-b647-52a3cecbe67c" class="block text-sm font-medium text-gray-700 mb-1">
+                                        物体质量 (m): <span id="mass-value">1.0</span> kg
+                                    </label>
+                                    <input id="mass-slider" type="range" min="0.5" max="5" step="0.1" value="1.0" class="control-slider w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                            </div>
+
+                            <!-- 运动数据 -->
+                            <div id="e2dfe5cc-6863-4db8-ab35-4dbfd914c853" class="bg-gray-50 rounded-lg p-4">
+                                <h3 id="58160610-0ebd-424b-83a2-c75cbac38332" class="text-sm font-semibold mb-3 text-gray-700">运动参数实时显示</h3>
+                                <div id="a4845885-b15b-4ec5-8862-f1cca77d6193" class="grid grid-cols-2 gap-2 text-sm">
+                                    <div id="a409ffb2-18ea-4b73-8673-eb9b2f48c922" class="bg-white rounded p-2">
+                                        <span id="56d7bd47-cc65-4262-bf23-5ad323018746" class="text-gray-500">加速度:</span>
+                                        <span id="acceleration-value" class="font-mono">0.00</span> m/s²
+                                    </div>
+                                    <div id="e0066f95-e873-4a2b-af03-183e06482e8f" class="bg-white rounded p-2">
+                                        <span id="bc0e4b79-b462-44fc-90ec-0004f19b695a" class="text-gray-500">速度:</span>
+                                        <span id="velocity-value" class="font-mono">0.00</span> m/s
+                                    </div>
+                                    <div id="e395b2e9-376c-40d5-b72d-2a68755cb9f8" class="bg-white rounded p-2">
+                                        <span id="2515ee0f-bc5e-44d1-b345-9c47ed4d77f8" class="text-gray-500">位移:</span>
+                                        <span id="position-value" class="font-mono">0.00</span> m
+                                    </div>
+                                    <div id="4a1eaaed-36fe-43cb-8acf-0c629fc08fc1" class="bg-white rounded p-2">
+                                        <span id="ac634661-a3b8-4c1a-85db-038a745ce693" class="text-gray-500">时间:</span>
+                                        <span id="time-value" class="font-mono">0.00</span> s
+                                    </div>
+                                </div>
+
+                                <div id="9179636e-dff9-4927-acc5-2f01451249d4" class="mt-3 grid grid-cols-2 gap-2 text-sm">
+                                    <div id="615d5ee1-8a4c-4dde-a5e4-79d1d51291bd" class="bg-blue-50 rounded p-2">
+                                        <span id="cb01bcef-12df-44a5-a8a4-1d4ae65ffc2c" class="text-blue-700">平行分力:</span>
+                                        <span id="parallel-force-value" class="font-mono">0.00</span> N
+                                    </div>
+                                    <div id="6c42f760-57c2-4723-a31c-3b573765522e" class="bg-blue-50 rounded p-2">
+                                        <span id="aa3d4154-bb60-4dd3-b10a-8e0772fdbda5" class="text-blue-700">垂直分力:</span>
+                                        <span id="normal-force-value" class="font-mono">0.00</span> N
+                                    </div>
+                                    <div id="6e3699b0-235e-47bc-bf4a-fcba40817ae2" class="bg-orange-50 rounded p-2">
+                                        <span id="7ec16a7f-1bee-437b-8a96-8b0f87f91c5e" class="text-orange-700">摩擦力:</span>
+                                        <span id="friction-force-value" class="font-mono">0.00</span> N
+                                    </div>
+                                    <div id="0139ec44-fa1a-4da8-9ac3-4156f5840e74" class="bg-green-50 rounded p-2">
+                                        <span id="e325fda7-c888-4b11-a29d-97a224a3f57c" class="text-green-700">合力:</span>
+                                        <span id="net-force-value" class="font-mono">0.00</span> N
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 按钮控制 -->
+                        <div id="4942e050-42d2-4807-aa35-b161bfef71ee" class="mt-6 flex justify-center space-x-4">
+                            <button id="start-button" class="btn flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                <i class="fas fa-play mr-2"></i>开始
+                            </button>
+                            <button id="pause-button" class="btn flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700" disabled>
+                                <i class="fas fa-pause mr-2"></i>暂停
+                            </button>
+                            <button id="reset-button" class="btn flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                <i class="fas fa-redo-alt mr-2"></i>重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer id="f28ff912-e82d-4f3a-9408-0cf444c293c4" class="bg-gray-100 py-4 border-t border-gray-200 mt-8">
+            <div id="6141b09c-fa57-434a-b742-ca1a0dca9989" class="container mx-auto px-4 text-center text-sm text-gray-600">
+                <p id="510939b1-7a8d-4fff-bc9c-ddc77d213a0c">© 2025 物理教学模拟实验平台 | 
+                    <a id="e3111028-5dbe-4a09-9918-605ef68934b5" href="#" class="text-blue-600 hover:underline">关于我们</a> | 
+                    <a id="abfd5178-cf82-4b1c-8dc9-9f740eeabe55" href="#" class="text-blue-600 hover:underline">更多教学资源</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 设置全局变量
+        let simulationRunning = false;
+        let sketch;
+        const g = 9.8; // 重力加速度 m/s²
+
+        // 模拟器状态
+        const state = {
+            angle: 30, // 角度（度）
+            friction: 0.2, // 摩擦系数
+            mass: 1.0, // 质量 (kg)
+            position: 0, // 位置 (m)
+            velocity: 0, // 速度 (m/s)
+            acceleration: 0, // 加速度 (m/s²)
+            time: 0, // 时间 (s)
+            isMoving: false, // 是否运动
+        };
+
+        // 控制元素
+        const angleSlider = document.getElementById('angle-slider');
+        const frictionSlider = document.getElementById('friction-slider');
+        const massSlider = document.getElementById('mass-slider');
+        const startButton = document.getElementById('start-button');
+        const pauseButton = document.getElementById('pause-button');
+        const resetButton = document.getElementById('reset-button');
+
+        // 值显示元素
+        const angleValueDisplay = document.getElementById('angle-value');
+        const frictionValueDisplay = document.getElementById('friction-value');
+        const massValueDisplay = document.getElementById('mass-value');
+        const accelerationValueDisplay = document.getElementById('acceleration-value');
+        const velocityValueDisplay = document.getElementById('velocity-value');
+        const positionValueDisplay = document.getElementById('position-value');
+        const timeValueDisplay = document.getElementById('time-value');
+        const parallelForceValueDisplay = document.getElementById('parallel-force-value');
+        const normalForceValueDisplay = document.getElementById('normal-force-value');
+        const frictionForceValueDisplay = document.getElementById('friction-force-value');
+        const netForceValueDisplay = document.getElementById('net-force-value');
+
+        // P5.js 绘图
+        new p5(p => {
+            sketch = p;
+            let boxSize;
+            let planeLength;
+            let planeHeight;
+            let groundLevel;
+            let originX, originY;
+            
+            p.setup = function() {
+                const container = document.getElementById('sketch-holder');
+                const canvas = p.createCanvas(container.offsetWidth, container.offsetHeight);
+                canvas.parent('sketch-holder');
+                
+                boxSize = p.width / 20;
+                planeLength = p.width * 0.7;
+                planeHeight = p.height * 0.6;
+                groundLevel = p.height * 0.8;
+                originX = p.width * 0.2;
+                originY = groundLevel;
+                
+                calculatePhysics();
+                updateDisplayValues();
+            };
+            
+            p.draw = function() {
+                p.background(246, 248, 250);
+                
+                // 如果模拟运行中且物体在运动，则更新物理参数
+                if (simulationRunning && state.isMoving) {
+                    // 更新时间和位置
+                    state.time += p.deltaTime / 1000;
+                    state.velocity += state.acceleration * (p.deltaTime / 1000);
+                    state.position += state.velocity * (p.deltaTime / 1000);
+                    
+                    // 检查是否超出斜面
+                    const maxPosition = planeLength / Math.cos(p.radians(state.angle));
+                    if (state.position > maxPosition) {
+                        simulationRunning = false;
+                        state.position = maxPosition;
+                        state.velocity = 0;
+                        toggleSimulationButtons(false);
+                    }
+                    
+                    updateDisplayValues();
+                }
+                
+                // 绘制斜面
+                drawInclinePlane();
+                
+                // 绘制物体
+                drawBox();
+                
+                // 绘制力向量
+                if (state.isMoving || !simulationRunning) {
+                    drawForceVectors();
+                }
+            };
+            
+            // 绘制斜面
+            function drawInclinePlane() {
+                p.push();
+                p.translate(originX, originY);
+                
+                // 地面
+                p.stroke(100);
+                p.strokeWeight(2);
+                p.line(-originX * 0.8, 0, p.width, 0);
+                
+                // 斜面
+                p.fill(220);
+                p.stroke(80);
+                p.strokeWeight(2);
+                p.beginShape();
+                p.vertex(0, 0);
+                const endX = planeLength * Math.cos(p.radians(state.angle));
+                const endY = -planeLength * Math.sin(p.radians(state.angle));
+                p.vertex(endX, endY);
+                p.vertex(endX, 0);
+                p.vertex(0, 0);
+                p.endShape(p.CLOSE);
+                
+                // 角度标记
+                p.noFill();
+                p.stroke(30, 144, 255);
+                p.strokeWeight(2);
+                p.arc(0, 0, 50, 50, -p.HALF_PI, -p.HALF_PI + p.radians(state.angle));
+                p.fill(30, 144, 255);
+                p.noStroke();
+                p.textSize(14);
+                p.textAlign(p.CENTER);
+                const labelX = 35 * Math.cos(-p.HALF_PI + p.radians(state.angle) / 2);
+                const labelY = 35 * Math.sin(-p.HALF_PI + p.radians(state.angle) / 2);
+                p.text(`θ = ${state.angle}°`, labelX, labelY);
+                
+                p.pop();
+            }
+            
+            // 绘制物体
+            function drawBox() {
+                p.push();
+                p.translate(originX, originY);
+                p.rotate(-p.radians(state.angle));
+                
+                // 计算物体在斜面上的位置
+                const boxX = state.position;
+                
+                // 绘制物体
+                p.fill(52, 152, 219);
+                p.stroke(41, 128, 185);
+                p.strokeWeight(2);
+                p.rect(boxX, -boxSize/2, boxSize, boxSize);
+                
+                // 质量标记
+                p.fill(255);
+                p.noStroke();
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(12);
+                p.text(`${state.mass}kg`, boxX + boxSize/2, 0);
+                
+                p.pop();
+            }
+            
+            // 绘制力向量
+            function drawForceVectors() {
+                // 首先获取物体在画布中的位置
+                const angleRad = p.radians(state.angle);
+                const boxPosition = state.position;
+                
+                const rotatedX = boxPosition * Math.cos(angleRad);
+                const rotatedY = -boxPosition * Math.sin(angleRad);
+                
+                const boxCenterX = originX + rotatedX;
+                const boxCenterY = originY + rotatedY;
+                
+                const scale = 10; // 缩放力的大小，使它们在视觉上更明显
+                
+                p.push();
+                
+                // 重力 (绿色)
+                const weightForce = state.mass * g;
+                p.stroke(46, 204, 113);
+                p.strokeWeight(3);
+                p.fill(46, 204, 113);
+                p.line(boxCenterX, boxCenterY, boxCenterX, boxCenterY + weightForce * scale);
+                drawArrow(boxCenterX, boxCenterY + weightForce * scale, p.PI, 10);
+                p.textAlign(p.LEFT, p.CENTER);
+                p.text("G", boxCenterX + 5, boxCenterY + weightForce * scale / 2);
+                
+                // 重力沿斜面分力 (蓝色)
+                const parallelForce = weightForce * Math.sin(angleRad);
+                const parallelX = Math.cos(angleRad) * parallelForce * scale;
+                const parallelY = Math.sin(angleRad) * parallelForce * scale;
+                p.stroke(30, 144, 255);
+                p.strokeWeight(3);
+                p.fill(30, 144, 255);
+                p.line(boxCenterX, boxCenterY, boxCenterX + parallelX, boxCenterY + parallelY);
+                drawArrow(boxCenterX + parallelX, boxCenterY + parallelY, angleRad, 10);
+                p.text("F∥", boxCenterX + parallelX / 2 + 5, boxCenterY + parallelY / 2 + 5);
+                
+                // 重力垂直于斜面分力 (紫色)
+                const normalForce = weightForce * Math.cos(angleRad);
+                const normalX = -Math.sin(angleRad) * normalForce * scale;
+                const normalY = Math.cos(angleRad) * normalForce * scale;
+                p.stroke(142, 68, 173);
+                p.strokeWeight(3);
+                p.fill(142, 68, 173);
+                p.line(boxCenterX, boxCenterY, boxCenterX + normalX, boxCenterY + normalY);
+                drawArrow(boxCenterX + normalX, boxCenterY + normalY, angleRad - p.HALF_PI, 10);
+                p.text("F⊥", boxCenterX + normalX / 2 - 20, boxCenterY + normalY / 2 - 5);
+                
+                // 摩擦力 (红色)
+                if (state.friction > 0) {
+                    const frictionForce = state.friction * normalForce;
+                    const frictionX = -Math.cos(angleRad) * frictionForce * scale;
+                    const frictionY = -Math.sin(angleRad) * frictionForce * scale;
+                    p.stroke(231, 76, 60);
+                    p.strokeWeight(3);
+                    p.fill(231, 76, 60);
+                    p.line(boxCenterX, boxCenterY, boxCenterX + frictionX, boxCenterY + frictionY);
+                    drawArrow(boxCenterX + frictionX, boxCenterY + frictionY, angleRad + p.PI, 10);
+                    p.text("f", boxCenterX + frictionX / 2 - 15, boxCenterY + frictionY / 2 - 5);
+                }
+                
+                p.pop();
+            }
+            
+            // 绘制箭头
+            function drawArrow(x, y, angle, size) {
+                p.push();
+                p.translate(x, y);
+                p.rotate(angle);
+                p.triangle(0, 0, -size, -size/2, -size, size/2);
+                p.pop();
+            }
+            
+            // 窗口大小调整时重新设置画布大小
+            p.windowResized = function() {
+                const container = document.getElementById('sketch-holder');
+                p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                
+                boxSize = p.width / 20;
+                planeLength = p.width * 0.7;
+                planeHeight = p.height * 0.6;
+                groundLevel = p.height * 0.8;
+                originX = p.width * 0.2;
+                originY = groundLevel;
+            };
+        });
+
+        // 计算物理参数
+        function calculatePhysics() {
+            const angleRad = Math.PI * state.angle / 180;
+            const parallelForce = state.mass * g * Math.sin(angleRad);
+            const normalForce = state.mass * g * Math.cos(angleRad);
+            const frictionForce = state.friction * normalForce;
+            const netForce = parallelForce - frictionForce;
+            
+            // 计算加速度
+            state.acceleration = netForce / state.mass;
+            
+            // 判断物体是否会运动
+            state.isMoving = netForce > 0;
+            
+            if (!state.isMoving) {
+                state.acceleration = 0;
+                state.velocity = 0;
+            }
+        }
+
+        // 更新显示值
+        function updateDisplayValues() {
+            // 更新物理量显示
+            const angleRad = Math.PI * state.angle / 180;
+            const parallelForce = state.mass * g * Math.sin(angleRad);
+            const normalForce = state.mass * g * Math.cos(angleRad);
+            const frictionForce = state.friction * normalForce;
+            const netForce = parallelForce - frictionForce;
+
+            angleValueDisplay.textContent = state.angle.toFixed(0);
+            frictionValueDisplay.textContent = state.friction.toFixed(2);
+            massValueDisplay.textContent = state.mass.toFixed(1);
+            
+            accelerationValueDisplay.textContent = state.acceleration.toFixed(2);
+            velocityValueDisplay.textContent = state.velocity.toFixed(2);
+            positionValueDisplay.textContent = state.position.toFixed(2);
+            timeValueDisplay.textContent = state.time.toFixed(2);
+            
+            parallelForceValueDisplay.textContent = parallelForce.toFixed(2);
+            normalForceValueDisplay.textContent = normalForce.toFixed(2);
+            frictionForceValueDisplay.textContent = frictionForce.toFixed(2);
+            netForceValueDisplay.textContent = netForce.toFixed(2);
+        }
+
+        // 重置模拟器
+        function resetSimulation() {
+            simulationRunning = false;
+            state.position = 0;
+            state.velocity = 0;
+            state.time = 0;
+            
+            calculatePhysics();
+            updateDisplayValues();
+            
+            toggleSimulationButtons(false);
+        }
+
+        // 切换模拟按钮状态
+        function toggleSimulationButtons(isRunning) {
+            simulationRunning = isRunning;
+            startButton.disabled = isRunning;
+            pauseButton.disabled = !isRunning;
+            
+            if (isRunning) {
+                startButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                startButton.classList.add('bg-gray-400');
+                pauseButton.classList.remove('bg-gray-600');
+                pauseButton.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+            } else {
+                startButton.classList.remove('bg-gray-400');
+                startButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                pauseButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                pauseButton.classList.add('bg-gray-600');
+            }
+        }
+
+        // 事件监听器
+        angleSlider.addEventListener('input', function() {
+            state.angle = parseInt(this.value);
+            calculatePhysics();
+            updateDisplayValues();
+        });
+
+        frictionSlider.addEventListener('input', function() {
+            state.friction = parseFloat(this.value);
+            calculatePhysics();
+            updateDisplayValues();
+        });
+
+        massSlider.addEventListener('input', function() {
+            state.mass = parseFloat(this.value);
+            calculatePhysics();
+            updateDisplayValues();
+        });
+
+        startButton.addEventListener('click', function() {
+            if (!simulationRunning) {
+                calculatePhysics();
+                toggleSimulationButtons(true);
+            }
+        });
+
+        pauseButton.addEventListener('click', function() {
+            if (simulationRunning) {
+                toggleSimulationButtons(false);
+            }
+        });
+
+        resetButton.addEventListener('click', resetSimulation);
+
+        // 初始化重置
+        resetSimulation();
+    </script>
+</body>
+</html>
