@@ -7,6 +7,7 @@
 
 - PhysicsVisuals物理可视化教学
 - 专注于初中物理教育创新，致力于科学素养培养
+- fork from: https://github.com/Lisa94destiny/physics-simulation
 
 
 ## 项目特点
