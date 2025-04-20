@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>力与运动的交互式可视化</title>
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <script src="https://fastly.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --neutral: #e2e8f0;
+            --background: #f8fafc;
+            --white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background);
+            color: #334155;
+        }
+        
+        .simulation-container {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: var(--white);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab {
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: var(--neutral);
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .control-panel {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .formula {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+        
+        .canvas-container {
+            min-height: 350px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="f0c21e36-8b2e-4e31-865c-f4dd32bf9c42" class="container mx-auto px-4 py-8 max-w-6xl">
+        <header id="ba1aeb3c-b87d-42a5-89c4-bb81f3d4f7e4" class="mb-8">
+            <h1 id="c7c9e0eb-de10-486e-9d65-88d67fd536b8" class="text-3xl font-bold text-center text-gray-800">力与运动的交互式可视化</h1>
+            <p id="e2a87b1a-39f1-4bc3-9b12-29b5d8b04c7a" class="text-center text-gray-600 mt-2">探索牛顿力学的基本原理与应用</p>
+        </header>
+        
+        <nav id="e0fb1a04-e08b-4eae-a4ee-7cbe37e7ce01" class="flex justify-center mb-8 border-b border-gray-200 pb-2">
+            <div id="d3d33ef4-6c9a-4c39-a72e-7ab3e9ae9a3a" class="tab active mx-6 pb-2" data-tab="newton">
+                <i id="fcd53a78-2ece-4e56-84cf-75e63d53d03c" class="fas fa-arrow-right mr-2"></i>牛顿第二定律
+            </div>
+            <div id="ed2e3872-de9b-47bd-8532-48bb1ec6979f" class="tab mx-6 pb-2" data-tab="forces">
+                <i id="f70952b3-7dcb-457c-853a-97cb73d1f69e" class="fas fa-compress-arrows-alt mr-2"></i>力的合成与分解
+            </div>
+            <div id="a48f6a01-31ac-42bd-94a7-95f9b14a97ec" class="tab mx-6 pb-2" data-tab="friction">
+                <i id="a4f79ce4-3d74-4fc5-8b7d-6b5af3cc0607" class="fas fa-hand-paper mr-2"></i>摩擦力与运动
+            </div>
+        </nav>
+        
+        <!-- 牛顿第二定律模拟 -->
+        <div id="cb73c5f0-0d59-4f3a-9c0f-daa20ca70e8a" class="tab-content active" data-tab="newton">
+            <div id="f4fa0e3a-3584-4bd7-8d4a-a2a975a15249" class="simulation-container p-6 mb-8">
+                <div id="bbeb0bd7-05d0-4c2e-8e86-cfbda0cf95b8" class="flex flex-col md:flex-row">
+                    <div id="f4d82f4e-24fd-4fa4-85ee-f45be5fb3fd6" class="w-full md:w-2/3 canvas-container" id="newton-simulation">
+                        <!-- P5.js 渲染区域 -->
+                    </div>
+                    <div id="a3bdc40e-71fb-460f-9cc4-4c6eecc3f1f0" class="w-full md:w-1/3 pl-0 md:pl-6 mt-4 md:mt-0">
+                        <div id="bc842f65-5e85-4318-be34-e21a39ea3b6c" class="control-panel p-4">
+                            <h3 id="d4b59e0b-b0a3-4f42-a3cb-26b2a3ec7f5c" class="text-xl font-semibold mb-4">参数控制</h3>
+                            
+                            <div id="c4dff8e0-1ec9-46d9-a6c5-e41d31c2df52" class="mb-4">
+                                <label id="bc9e7ee7-6e5c-485c-8fbb-f057398ccf4c" class="block text-sm font-medium mb-2">
+                                    作用力 (N): <span id="force-value">5</span>
+                                </label>
+                                <input id="dc7c1f3b-2ac2-4ee6-9118-59d7a3fd4d89" type="range" min="0" max="20" value="5" class="slider" id="force-slider">
+                            </div>
+                            
+                            <div id="b77e6d72-d9c6-4edc-bd34-1ca07ed65d01" class="mb-4">
+                                <label id="cb6c96ca-a273-4e00-8075-7c50d1c38ea0" class="block text-sm font-medium mb-2">
+                                    物体质量 (kg): <span id="mass-value">1</span>
+                                </label>
+                                <input id="a1f3cb0d-a66c-48a1-8b1b-a0db1e04f96c" type="range" min="0.5" max="10" step="0.5" value="1" class="slider" id="mass-slider">
+                            </div>
+                            
+                            <button id="ba5b1e33-e2ac-44ad-bf1b-aeb35ea5cc94" class="btn bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 transition mt-4" id="newton-reset">
+                                重置模拟
+                            </button>
+                            
+                            <div id="c42f6c4e-27ff-466e-a6ea-e02e2577fb15" class="mt-6 bg-blue-50 rounded p-3">
+                                <h4 id="ab835aa3-c53a-4538-bc7f-19d273b73ec5" class="font-semibold mb-2">实时数据</h4>
+                                <div id="fd7d9da4-05cc-4af5-8ed7-89c54aaa8444" class="grid grid-cols-2 gap-2 text-sm">
+                                    <div id="c59c4cf3-bad4-44e6-acca-70f5f89644c5">加速度: <span id="newton-acceleration">5.00</span> m/s²</div>
+                                    <div id="b35d7c31-8fb7-4b59-bda0-b8ac1be26ccc">速度: <span id="newton-velocity">0.00</span> m/s</div>
+                                    <div id="e3b9a84a-fd0f-4b85-a01b-f0f92df2e2af">位移: <span id="newton-displacement">0.00</span> m</div>
+                                    <div id="ea18c56a-1de6-42d1-953a-5f12a28f6af4">时间: <span id="newton-time">0.00</span> s</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="cb33acfa-5773-4cfd-adb0-fc175e50e8d0" class="mt-6 p-4 bg-gray-50 rounded">
+                    <h3 id="a49bd1b0-a63e-454c-bb72-b3f4f6962b81" class="text-lg font-semibold mb-2">牛顿第二定律</h3>
+                    <p id="bfdbcfb0-a8b0-470a-8d15-7d4b90686f14" class="formula text-xl text-center my-3">F = ma</p>
+                    <p id="d4a9af59-03da-48e7-9eda-9df3a7f37acf" class="text-sm">
+                        牛顿第二定律表明，物体加速度的大小与所受的合外力成正比，与物体的质量成反比，加速度的方向与合外力的方向相同。
+                        在这个模拟中，您可以通过调整作用力和物体质量，观察物体运动状态的变化，并实时查看加速度、速度和位移数据。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 力的合成与分解 -->
+        <div id="d9a57e9f-dded-44eb-a3db-8de4ee5ef3a4" class="tab-content" data-tab="forces">
+            <div id="e17fa5da-e6d9-4f47-b462-e56a84d98cdf" class="simulation-container p-6 mb-8">
+                <div id="f6c56e9b-80b3-4d70-a414-2fd06f8a9d88" class="flex flex-col md:flex-row">
+                    <div id="f34edc43-c9e4-494f-958a-a26e0f29d10a" class="w-full md:w-2/3 canvas-container" id="forces-simulation">
+                        <!-- P5.js 渲染区域 -->
+                    </div>
+                    <div id="f7aef3c8-7b34-4a1e-9a0a-73c835c0b0f8" class="w-full md:w-1/3 pl-0 md:pl-6 mt-4 md:mt-0">
+                        <div id="d1b5d2e7-0b6a-414c-bbdc-4a6c38c8f86a" class="control-panel p-4">
+                            <h3 id="f09c5845-9dc4-422c-a06c-f0ec6780dae5" class="text-xl font-semibold mb-4">参数控制</h3>
+                            
+                            <div id="f24e55bf-6fdb-46b7-98e1-5dad6d183cdd" class="mb-3">
+                                <label id="da7ff6dd-a3a5-46a1-94e5-42e644ddee33" class="block text-sm font-medium mb-2">
+                                    力 F₁ 大小 (N): <span id="force1-value">5</span>
+                                </label>
+                                <input id="b0dd8a03-cc29-45ea-abe5-bc30be88e17a" type="range" min="1" max="10" value="5" class="slider" id="force1-slider">
+                            </div>
+                            
+                            <div id="f3a1c8c5-3af8-4a71-8cca-ea30a6c7232b" class="mb-3">
+                                <label id="f3953d11-affe-41ad-834f-18c6ffe10e46" class="block text-sm font-medium mb-2">
+                                    力 F₁ 角度 (°): <span id="angle1-value">0</span>
+                                </label>
+                                <input id="a6f2b1d2-40f5-431e-b304-b5d4a2e3f33a" type="range" min="0" max="359" value="0" class="slider" id="angle1-slider">
+                            </div>
+                            
+                            <div id="a16df845-5ccb-4583-a2d4-c00eb3b23d88" class="mb-3">
+                                <label id="fe1af31a-6af0-4731-9d5f-0eaec1ddd58b" class="block text-sm font-medium mb-2">
+                                    力 F₂ 大小 (N): <span id="force2-value">3</span>
+                                </label>
+                                <input id="fccf6d85-a5ee-4ce4-9bdd-e9414d42b8d3" type="range" min="1" max="10" value="3" class="slider" id="force2-slider">
+                            </div>
+                            
+                            <div id="cb8fa18d-3c38-45c2-addd-59865ba7f4eb" class="mb-3">
+                                <label id="c68a42b1-ab1a-4ec0-9991-1c0fb93e89a9" class="block text-sm font-medium mb-2">
+                                    力 F₂ 角度 (°): <span id="angle2-value">90</span>
+                                </label>
+                                <input id="f9981e2a-8577-4dc9-90e0-4dcd2f63c43d" type="range" min="0" max="359" value="90" class="slider" id="angle2-slider">
+                            </div>
+                            
+                            <div id="b41fa6b0-2cc7-4d1c-b67a-96c6bceecb11" class="mt-6 bg-blue-50 rounded p-3">
+                                <h4 id="a8f2eca4-de85-42b6-9841-4d9e3d5b34e0" class="font-semibold mb-2">合力数据</h4>
+                                <div id="a3ce2ab3-8f33-43cf-9a89-b2fcfb79baae" class="grid grid-cols-2 gap-2 text-sm">
+                                    <div id="e8c4ac9c-0978-4a30-a5c9-ac22b4cfc6c9">合力大小: <span id="resultant-magnitude">5.83</span> N</div>
+                                    <div id="ba559e0e-af09-42d0-b7ee-f21a7f3b4d62">合力角度: <span id="resultant-angle">31.0</span>°</div>
+                                    <div id="ff5a78e2-aef2-4c6a-87c6-3e4cc0e5c991">F₁x: <span id="f1x">5.00</span> N</div>
+                                    <div id="cd2c6d0b-5d18-436e-b0ec-b54a67a8e2a9">F₁y: <span id="f1y">0.00</span> N</div>
+                                    <div id="bd7b7a2f-5b44-499e-8dd1-c43e08c7d3a9">F₂x: <span id="f2x">0.00</span> N</div>
+                                    <div id="f3e00599-9e0b-4ac2-bc10-67d57db9c8ed">F₂y: <span id="f2y">3.00</span> N</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="c3f9b1b0-ba04-4ff7-a0a4-4a8cda90a343" class="mt-6 p-4 bg-gray-50 rounded">
+                    <h3 id="e4d1e13d-6cf6-46d0-9366-b02b1f7e694c" class="text-lg font-semibold mb-2">力的合成与分解原理</h3>
+                    <p id="af60e5fd-c6c3-4fbd-9b3f-82c10fced08e" class="formula text-xl text-center my-3">F = √(F₁² + F₂² + 2·F₁·F₂·cos(θ₁₂))</p>
+                    <p id="c9e1f48b-6bc7-41bd-b2f5-bfdc4f32b2df" class="text-sm">
+                        力是矢量，具有大小和方向。多个力的合成遵循矢量加法规则，可以通过分解为 x、y 分量后相加来计算。
+                        在这个模拟中，您可以调整两个力的大小和方向，观察合力的变化，理解力的矢量性质和合成原理。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 摩擦力与运动 -->
+        <div id="d8e14f72-1fcc-4bb0-b7c4-f8b4f0c42b1d" class="tab-content" data-tab="friction">
+            <div id="b78c0bfc-d2fd-4f07-8aa1-0f00d2a5c2e4" class="simulation-container p-6 mb-8">
+                <div id="f57a42cd-78ea-48dc-aa83-3df3651c44a5" class="flex flex-col md:flex-row">
+                    <div id="a5a5bb1e-3ff7-488e-bf0e-c0c80e1d6633" class="w-full md:w-2/3 canvas-container" id="friction-simulation">
+                        <!-- P5.js 渲染区域 -->
+                    </div>
+                    <div id="a18ba8e7-c4f0-4e7b-bc95-4ca42c64fa60" class="w-full md:w-1/3 pl-0 md:pl-6 mt-4 md:mt-0">
+                        <div id="ee8c7ce8-8b1b-4b72-8caf-7d8dd7eebf00" class="control-panel p-4">
+                            <h3 id="be3fa4fc-0be5-4b75-a1ac-c3cded88d90a" class="text-xl font-semibold mb-4">参数控制</h3>
+                            
+                            <div id="a4adaa35-ac5e-4fc7-9a3e-f45a26a2e7d6" class="mb-3">
+                                <label id="c2fbbec7-1c27-46b3-84ec-0efcb0249a5c" class="block text-sm font-medium mb-2">
+                                    初始推力 (N): <span id="initial-force-value">10</span>
+                                </label>
+                                <input id="c51e3962-1faa-4c1e-bd04-7b7a05c92580" type="range" min="5" max="30" value="10" class="slider" id="initial-force-slider">
+                            </div>
+                            
+                            <div id="c67acabe-07dc-4c97-adcb-50493aeb8981" class="mb-3">
+                                <label id="c02f1204-b08e-49a1-bf3c-7bf4a52f6887" class="block text-sm font-medium mb-2">
+                                    物体质量 (kg): <span id="friction-mass-value">2</span>
+                                </label>
+                                <input id="c2cb1f07-aff3-4363-80df-d618c5a4d452" type="range" min="0.5" max="5" step="0.5" value="2" class="slider" id="friction-mass-slider">
+                            </div>
+                            
+                            <div id="c2f7d9d7-e3de-41a9-8c0a-94b9e13fdb31" class="mb-3">
+                                <label id="c3d3ffca-1ce1-461a-8ad8-fbe7c6fa36b3" class="block text-sm font-medium mb-2">
+                                    摩擦系数 μ: <span id="friction-coef-value">0.2</span>
+                                </label>
+                                <input id="bf9b10d3-15ff-4fc0-850d-6a0f4ceba818" type="range" min="0.05" max="0.5" step="0.05" value="0.2" class="slider" id="friction-coef-slider">
+                            </div>
+                            
+                            <button id="a1e5c1cb-df74-4a62-9e14-efab25efa97b" class="btn bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 transition" id="friction-start">
+                                开始模拟
+                            </button>
+                            
+                            <div id="cbd01ce3-1d11-47f5-ab1d-cc1723c5de5d" class="mt-6 bg-blue-50 rounded p-3">
+                                <h4 id="b87055f9-d78a-4c22-a31a-32664dded2fa" class="font-semibold mb-2">模拟数据</h4>
+                                <div id="e8f41d15-df30-468a-aa5e-c2e7d3f8ef97" class="grid grid-cols-2 gap-2 text-sm">
+                                    <div id="c7c37a5e-2bd4-4ba2-8ceb-69ed11ed2f5b">摩擦力: <span id="friction-force">3.92</span> N</div>
+                                    <div id="b8e0c6c0-c73d-46b5-b2d4-9a7b8b0a7b2c">当前速度: <span id="friction-velocity">0.00</span> m/s</div>
+                                    <div id="d7f0afd0-57f9-46ab-b3a0-9bfb4aad9a35">滑行距离: <span id="friction-distance">0.00</span> m</div>
+                                    <div id="ac462507-7a53-4991-9242-44d4e2c83bbd">滑行时间: <span id="friction-time">0.00</span> s</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="fd4f9af1-8f47-4de1-a7a0-a72b4abbd5dd" class="mt-6 p-4 bg-gray-50 rounded">
+                    <h3 id="a50bf5c6-1d90-4ecf-8cd0-b9dfadd9dae3" class="text-lg font-semibold mb-2">摩擦力与运动关系</h3>
+                    <p id="a03fff4e-1e3b-4a60-93ae-9b9ba84f9fa9" class="formula text-xl text-center my-3">f = μmg</p>
+                    <p id="cf2e5387-76b6-45b5-8a18-dce6d4b2e7e6" class="text-sm">
+                        动摩擦力与物体的正压力成正比，与物体质量和重力加速度的乘积成正比，方向始终与物体运动方向相反。
+                        摩擦力会使物体减速，直到速度为零。在这个模拟中，您可以通过调整初始推力、物体质量和摩擦系数，
+                        观察物体在不同摩擦条件下的运动状态变化，包括滑行距离和时间。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 选项卡切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    
+                    // 更新选项卡状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // 更新内容区域
+                    tabContents.forEach(content => {
+                        if (content.dataset.tab === target) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // P5.js 模拟初始化
+            initializeNewtonSimulation();
+            initializeForcesSimulation();
+            initializeFrictionSimulation();
+        });
+        
+        // 牛顿第二定律模拟
+        function initializeNewtonSimulation() {
+            let newtonSketch = new p5(function(p) {
+                let force = 5;      // 初始力为 5N
+                let mass = 1;       // 初始质量为 1kg
+                let acceleration = force / mass;  // 计算加速度 (F=ma)
+                let velocity = 0;   // 初始速度
+                let displacement = 0; // 初始位移
+                let time = 0;       // 计时器
+                let boxX = 50;      // 方块的初始 x 位置
+                let boxSize = 40;   // 方块的大小
+                let isSimulating = false; // 模拟状态
+                let ground = 250;   // 地面位置
+                
+                // 更新 UI 显示
+                const updateUI = () => {
+                    document.getElementById('newton-acceleration').textContent = acceleration.toFixed(2);
+                    document.getElementById('newton-velocity').textContent = velocity.toFixed(2);
+                    document.getElementById('newton-displacement').textContent = displacement.toFixed(2);
+                    document.getElementById('newton-time').textContent = time.toFixed(2);
+                };
+                
+                p.setup = function() {
+                    let canvas = p.createCanvas(600, 300);
+                    canvas.parent('newton-simulation');
+                    
+                    // 滑块事件监听
+                    document.getElementById('force-slider').addEventListener('input', function() {
+                        force = parseFloat(this.value);
+                        document.getElementById('force-value').textContent = force;
+                        acceleration = force / mass;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('mass-slider').addEventListener('input', function() {
+                        mass = parseFloat(this.value);
+                        document.getElementById('mass-value').textContent = mass;
+                        acceleration = force / mass;
+                        updateUI();
+                    });
+                    
+                    // 重置按钮
+                    document.getElementById('newton-reset').addEventListener('click', resetSimulation);
+                    
+                    updateUI();
+                };
+                
+                p.draw = function() {
+                    p.background(255);
+                    
+                    // 绘制地面
+                    p.stroke(100);
+                    p.strokeWeight(2);
+                    p.line(0, ground, p.width, ground);
+                    
+                    // 计算物体位置
+                    if (isSimulating) {
+                        time += p.deltaTime / 1000; // 转换为秒
+                        velocity = acceleration * time;
+                        displacement = 0.5 * acceleration * time * time;
+                        boxX = 50 + displacement * 10; // 缩放位移以适应画布
+                        
+                        // 如果超出画布，重置模拟
+                        if (boxX > p.width - boxSize/2) {
+                            resetSimulation();
+                        }
+                    }
+                    
+                    // 绘制物体
+                    p.fill(41, 128, 185);
+                    p.noStroke();
+                    p.rect(boxX, ground - boxSize, boxSize, boxSize);
+                    
+                    // 绘制力矢量
+                    p.stroke(231, 76, 60);
+                    p.strokeWeight(3);
+                    p.line(boxX + boxSize/2, ground - boxSize/2, 
+                           boxX + boxSize/2 + force * 5, ground - boxSize/2);
+                    // 绘制箭头
+                    p.fill(231, 76, 60);
+                    p.noStroke();
+                    p.triangle(
+                        boxX + boxSize/2 + force * 5, ground - boxSize/2,
+                        boxX + boxSize/2 + force * 5 - 10, ground - boxSize/2 - 5,
+                        boxX + boxSize/2 + force * 5 - 10, ground - boxSize/2 + 5
+                    );
+                    
+                    // 添加文本标签
+                    p.textSize(14);
+                    p.fill(0);
+                    p.noStroke();
+                    p.text("F = " + force + " N", boxX + boxSize/2 + force * 2.5, ground - boxSize/2 - 10);
+                    p.text("m = " + mass + " kg", boxX + boxSize/2, ground - boxSize/2 + 30);
+                    
+                    // 更新 UI
+                    if (isSimulating) {
+                        updateUI();
+                    }
+                    
+                    // 如果未在模拟中，显示点击提示
+                    if (!isSimulating) {
+                        p.textSize(16);
+                        p.fill(100);
+                        p.text("点击画布开始模拟", p.width/2 - 80, p.height/2);
+                    }
+                };
+                
+                p.mousePressed = function() {
+                    if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+                        if (!isSimulating) {
+                            isSimulating = true;
+                        }
+                    }
+                };
+                
+                function resetSimulation() {
+                    time = 0;
+                    velocity = 0;
+                    displacement = 0;
+                    boxX = 50;
+                    isSimulating = false;
+                    updateUI();
+                }
+            }, 'newton-simulation');
+        }
+        
+        // 力的合成与分解模拟
+        function initializeForcesSimulation() {
+            let forcesSketch = new p5(function(p) {
+                let force1 = 5;      // 力 F1 大小
+                let angle1 = 0;      // 力 F1 角度（度）
+                let force2 = 3;      // 力 F2 大小
+                let angle2 = 90;     // 力 F2 角度（度）
+                
+                let centerX, centerY; // 力的作用点
+                
+                const updateUI = () => {
+                    // 计算 x, y 分量
+                    const f1x = force1 * Math.cos(angle1 * Math.PI / 180);
+                    const f1y = force1 * Math.sin(angle1 * Math.PI / 180);
+                    const f2x = force2 * Math.cos(angle2 * Math.PI / 180);
+                    const f2y = force2 * Math.sin(angle2 * Math.PI / 180);
+                    
+                    // 计算合力
+                    const resultantX = f1x + f2x;
+                    const resultantY = f1y + f2y;
+                    const resultantMagnitude = Math.sqrt(resultantX * resultantX + resultantY * resultantY);
+                    let resultantAngle = Math.atan2(resultantY, resultantX) * 180 / Math.PI;
+                    if (resultantAngle < 0) resultantAngle += 360;
+                    
+                    // 更新 UI
+                    document.getElementById('f1x').textContent = f1x.toFixed(2);
+                    document.getElementById('f1y').textContent = f1y.toFixed(2);
+                    document.getElementById('f2x').textContent = f2x.toFixed(2);
+                    document.getElementById('f2y').textContent = f2y.toFixed(2);
+                    document.getElementById('resultant-magnitude').textContent = resultantMagnitude.toFixed(2);
+                    document.getElementById('resultant-angle').textContent = resultantAngle.toFixed(1);
+                };
+                
+                p.setup = function() {
+                    let canvas = p.createCanvas(600, 300);
+                    canvas.parent('forces-simulation');
+                    
+                    centerX = p.width / 2;
+                    centerY = p.height / 2;
+                    
+                    // 滑块事件监听
+                    document.getElementById('force1-slider').addEventListener('input', function() {
+                        force1 = parseFloat(this.value);
+                        document.getElementById('force1-value').textContent = force1;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('angle1-slider').addEventListener('input', function() {
+                        angle1 = parseFloat(this.value);
+                        document.getElementById('angle1-value').textContent = angle1;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('force2-slider').addEventListener('input', function() {
+                        force2 = parseFloat(this.value);
+                        document.getElementById('force2-value').textContent = force2;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('angle2-slider').addEventListener('input', function() {
+                        angle2 = parseFloat(this.value);
+                        document.getElementById('angle2-value').textContent = angle2;
+                        updateUI();
+                    });
+                    
+                    updateUI();
+                };
+                
+                p.draw = function() {
+                    p.background(255);
+                    
+                    // 计算各力的分量
+                    const f1x = force1 * Math.cos(angle1 * Math.PI / 180);
+                    const f1y = force1 * Math.sin(angle1 * Math.PI / 180);
+                    const f2x = force2 * Math.cos(angle2 * Math.PI / 180);
+                    const f2y = force2 * Math.sin(angle2 * Math.PI / 180);
+                    
+                    // 计算合力
+                    const resultantX = f1x + f2x;
+                    const resultantY = f1y + f2y;
+                    const resultantMagnitude = Math.sqrt(resultantX * resultantX + resultantY * resultantY);
+                    
+                    // 绘制坐标轴
+                    p.stroke(200);
+                    p.strokeWeight(1);
+                    p.line(0, centerY, p.width, centerY); // x轴
+                    p.line(centerX, 0, centerX, p.height); // y轴
+                    
+                    // 绘制坐标刻度
+                    p.fill(100);
+                    p.textSize(12);
+                    p.text("x", p.width - 15, centerY - 5);
+                    p.text("y", centerX + 5, 15);
+                    
+                    // 力的缩放因子（为了使向量在画布上可见）
+                    const scaleFactor = 20;
+                    
+                    // 绘制力 F1
+                    drawForceVector(centerX, centerY, 
+                                  centerX + f1x * scaleFactor, 
+                                  centerY - f1y * scaleFactor, 
+                                  "F₁", "rgb(231, 76, 60)");
+                    
+                    // 绘制力 F2
+                    drawForceVector(centerX, centerY, 
+                                  centerX + f2x * scaleFactor, 
+                                  centerY - f2y * scaleFactor, 
+                                  "F₂", "rgb(52, 152, 219)");
+                    
+                    // 绘制合力
+                    drawForceVector(centerX, centerY, 
+                                  centerX + resultantX * scaleFactor, 
+                                  centerY - resultantY * scaleFactor, 
+                                  "F", "rgb(46, 204, 113)");
+                    
+                    // 绘制力的合成平行四边形
+                    p.stroke(150);
+                    p.strokeWeight(1);
+                    p.noFill();
+                    p.beginShape();
+                    p.vertex(centerX, centerY);
+                    p.vertex(centerX + f1x * scaleFactor, centerY - f1y * scaleFactor);
+                    p.vertex(centerX + resultantX * scaleFactor, centerY - resultantY * scaleFactor);
+                    p.vertex(centerX + f2x * scaleFactor, centerY - f2y * scaleFactor);
+                    p.endShape(p.CLOSE);
+                    
+                    // 绘制作用点
+                    p.fill(0);
+                    p.noStroke();
+                    p.ellipse(centerX, centerY, 8, 8);
+                };
+                
+                function drawForceVector(x1, y1, x2, y2, label, color) {
+                    // 计算向量长度和角度
+                    const dx = x2 - x1;
+                    const dy = y1 - y2; // y坐标反转，因为画布y轴向下
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // 箭头大小
+                    const arrowSize = 10;
+                    
+                    // 绘制线段
+                    p.stroke(color);
+                    p.strokeWeight(3);
+                    p.line(x1, y1, x2, y2);
+                    
+                    // 绘制箭头
+                    p.fill(color);
+                    p.noStroke();
+                    p.push();
+                    p.translate(x2, y2);
+                    p.rotate(angle);
+                    p.triangle(0, 0, -arrowSize, -arrowSize/2, -arrowSize, arrowSize/2);
+                    p.pop();
+                    
+                    // 添加文本标签
+                    p.textSize(14);
+                    p.fill(color);
+                    p.noStroke();
+                    // 调整文本位置使其不与向量重叠
+                    const labelOffsetX = dx/2 + (dx > 0 ? 10 : -20);
+                    const labelOffsetY = -dy/2 + (dy > 0 ? -15 : 5);
+                    p.text(label, x1 + labelOffsetX, y1 + labelOffsetY);
+                }
+            }, 'forces-simulation');
+        }
+        
+        // 摩擦力与运动模拟
+        function initializeFrictionSimulation() {
+            let frictionSketch = new p5(function(p) {
+                let initialForce = 10;   // 初始推力 (N)
+                let mass = 2;            // 物体质量 (kg)
+                let frictionCoef = 0.2;  // 摩擦系数
+                let g = 9.8;             // 重力加速度 (m/s²)
+                
+                let boxX = 50;           // 方块的初始 x 位置
+                let boxSize = 40;        // 方块大小
+                let ground = 200;        // 地面位置
+                
+                let velocity = 0;        // 当前速度
+                let distance = 0;        // 滑行距离
+                let time = 0;            // 模拟时间
+                let frictionForce = 0;   // 摩擦力大小
+                
+                let isSimulating = false; // 模拟状态
+                
+                // 更新 UI 显示
+                const updateUI = () => {
+                    document.getElementById('friction-force').textContent = frictionForce.toFixed(2);
+                    document.getElementById('friction-velocity').textContent = velocity.toFixed(2);
+                    document.getElementById('friction-distance').textContent = distance.toFixed(2);
+                    document.getElementById('friction-time').textContent = time.toFixed(2);
+                };
+                
+                p.setup = function() {
+                    let canvas = p.createCanvas(600, 300);
+                    canvas.parent('friction-simulation');
+                    
+                    // 计算初始摩擦力
+                    frictionForce = frictionCoef * mass * g;
+                    
+                    // 滑块事件监听
+                    document.getElementById('initial-force-slider').addEventListener('input', function() {
+                        initialForce = parseFloat(this.value);
+                        document.getElementById('initial-force-value').textContent = initialForce;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('friction-mass-slider').addEventListener('input', function() {
+                        mass = parseFloat(this.value);
+                        document.getElementById('friction-mass-value').textContent = mass;
+                        frictionForce = frictionCoef * mass * g;
+                        updateUI();
+                    });
+                    
+                    document.getElementById('friction-coef-slider').addEventListener('input', function() {
+                        frictionCoef = parseFloat(this.value);
+                        document.getElementById('friction-coef-value').textContent = frictionCoef;
+                        frictionForce = frictionCoef * mass * g;
+                        updateUI();
+                    });
+                    
+                    // 开始按钮
+                    document.getElementById('friction-start').addEventListener('click', function() {
+                        resetSimulation();
+                        isSimulating = true;
+                        // 计算初始速度 (v = F*t/m, 假设推力作用了0.1秒)
+                        velocity = (initialForce * 0.1) / mass;
+                    });
+                    
+                    updateUI();
+                };
+                
+                p.draw = function() {
+                    p.background(255);
+                    
+                    // 绘制地面
+                    p.stroke(100);
+                    p.strokeWeight(2);
+                    p.line(0, ground, p.width, ground);
+                    
+                    // 绘制说明
+                    p.noStroke();
+                    p.fill(100);
+                    p.textSize(14);
+                    p.text("粗糙表面 (μ = " + frictionCoef + ")", p.width/2 - 80, ground + 30);
+                    
+                    // 计算运动状态
+                    if (isSimulating) {
+                        const dt = p.deltaTime / 1000; // 转换为秒
+                        
+                        // 如果物体仍在运动
+                        if (velocity > 0) {
+                            time += dt;
+                            
+                            // 计算摩擦力产生的减速度
+                            const deceleration = frictionForce / mass;
+                            
+                            // 更新速度 (a = -μg)
+                            velocity -= deceleration * dt;
+                            if (velocity < 0) velocity = 0;
+                            
+                            // 更新位移
+                            const dx = velocity * dt;
+                            distance += dx;
+                            boxX += dx * 10; // 缩放位移以适应画布
+                        }
+                        
+                        updateUI();
+                    }
+                    
+                    // 绘制物体
+                    p.fill(52, 152, 219);
+                    p.noStroke();
+                    p.rect(boxX, ground - boxSize, boxSize, boxSize);
+                    
+                    // 如果物体在运动，绘制摩擦力箭头
+                    if (isSimulating && velocity > 0) {
+                        p.stroke(231, 76, 60);
+                        p.strokeWeight(3);
+                        p.line(boxX + boxSize/2, ground - boxSize/2, 
+                               boxX + boxSize/2 - 30, ground - boxSize/2);
+                        // 绘制箭头
+                        p.fill(231, 76, 60);
+                        p.noStroke();
+                        p.triangle(
+                            boxX + boxSize/2 - 30, ground - boxSize/2,
+                            boxX + boxSize/2 - 20, ground - boxSize/2 - 5,
+                            boxX + boxSize/2 - 20, ground - boxSize/2 + 5
+                        );
+                        
+                        // 添加文本标签
+                        p.textSize(14);
+                        p.fill(231, 76, 60);
+                        p.text("f = " + frictionForce.toFixed(1) + " N", 
+                               boxX + boxSize/2 - 50, ground - boxSize/2 - 15);
+                    }
+                    
+                    // 绘制质量标签
+                    p.fill(0);
+                    p.textSize(14);
+                    p.text("m = " + mass + " kg", boxX + boxSize/2 - 20, ground - boxSize/2 + 5);
+                    
+                    // 如果未在模拟中，显示提示
+                    if (!isSimulating) {
+                        p.textSize(16);
+                        p.fill(100);
+                        p.text("点击「开始模拟」按钮", p.width/2 - 80, p.height/2 - 50);
+                    }
+                };
+                
+                function resetSimulation() {
+                    boxX = 50;
+                    velocity = 0;
+                    distance = 0;
+                    time = 0;
+                    updateUI();
+                }
+            }, 'friction-simulation');
+        }
+    </script>
+</body>
+</html>
